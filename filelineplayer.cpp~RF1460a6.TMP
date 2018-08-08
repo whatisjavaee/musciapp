@@ -1,0 +1,20 @@
+#include "filelineplayer.h"
+
+FileLinePlayer::FileLinePlayer()
+{
+    setFlag(ItemHasContents, true);
+}
+QSGNode* FileLinePlayer::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
+{
+    qDebug() << "updatePaintNode" << this->width();
+    if (oldNode == NULL)
+    {
+        oldNode = new QSGNode();
+        QSGGeometryNode* node = new QSGGeometryNode;
+
+
+        oldNode->appendChildNode(node);
+    }
+    return oldNode;
+    return NULL;
+}
