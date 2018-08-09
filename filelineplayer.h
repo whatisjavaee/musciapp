@@ -4,6 +4,8 @@
 #include <QQuickItem>
 #include<QSGNode>
 #include<QSGFlatColorMaterial>
+#include<QSGRectangleNode>
+#include"blockqsgrectanglenode.h"
 class FileLinePlayer : public QQuickItem
 {
     Q_OBJECT

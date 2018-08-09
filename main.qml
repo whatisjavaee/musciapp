@@ -2,6 +2,7 @@ import QtQuick 2.9
 import QtQuick.Controls 2.2
 import FileLinePlayer 1.0
 import QtQuick.Window 2.2
+import OpenGLUnderQML 1.0
 ApplicationWindow {
     visible: true
     width: isMobileDevice( )?Screen.width: 640
@@ -20,9 +21,18 @@ ApplicationWindow {
         }
     }*/
     //background: "FFFFFF"
-    FileLinePlayer{
-        id:fPlayer
-        anchors.fill: parent
+    //FileLinePlayer{
+    //    id:fPlayer
+    //    anchors.fill: parent
+    //}
+
+    Squircle {
+        SequentialAnimation on t {
+            NumberAnimation { to: 1; duration: 2500; easing.type: Easing.InQuad }
+            NumberAnimation { to: 0; duration: 2500; easing.type: Easing.OutQuad }
+            loops: Animation.Infinite
+            running: true
+        }
     }
 
     function isMobileDevice( )// 判断是否是移动平台
