@@ -54,9 +54,9 @@
 #include <QtQuick/QQuickItem>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLFunctions>
-
-
-
+#include<QTime>
+#include<QOpenGLBuffer>
+#include<QOpenGLVertexArrayObject>
 //! [1]
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
@@ -65,9 +65,18 @@ public:
     SquircleRenderer() : m_t(0), m_program(0) { }
     ~SquircleRenderer();
 
-    void setT(qreal t) { m_t = t; }
-    void setViewportSize(const QSize &size) { m_viewportSize = size; }
-    void setWindow(QQuickWindow *window) { m_window = window; }
+    void setT(qreal t)
+    {
+        m_t = t;
+    }
+    void setViewportSize(const QSize& size)
+    {
+        m_viewportSize = size;
+    }
+    void setWindow(QQuickWindow* window)
+    {
+        m_window = window;
+    }
 
 public slots:
     void paint();
@@ -75,8 +84,11 @@ public slots:
 private:
     QSize m_viewportSize;
     qreal m_t;
-    QOpenGLShaderProgram *m_program;
-    QQuickWindow *m_window;
+    QOpenGLShaderProgram* m_program;
+    QQuickWindow* m_window;
+    QOpenGLBuffer               m_VertexBuffer, m_IndexBuffer;
+    QOpenGLVertexArrayObject m_object;
+
 };
 //! [1]
 
@@ -89,7 +101,10 @@ class Squircle : public QQuickItem
 public:
     Squircle();
 
-    qreal t() const { return m_t; }
+    qreal t() const
+    {
+        return m_t;
+    }
     void setT(qreal t);
 
 signals:
@@ -100,11 +115,11 @@ public slots:
     void cleanup();
 
 private slots:
-    void handleWindowChanged(QQuickWindow *win);
+    void handleWindowChanged(QQuickWindow* win);
 
 private:
     qreal m_t;
-    SquircleRenderer *m_renderer;
+    SquircleRenderer* m_renderer;
 };
 //! [2]
 
