@@ -5,8 +5,8 @@ import QtQuick.Window 2.2
 import OpenGLUnderQML 1.0
 ApplicationWindow {
     visible: true
-    width: isMobileDevice( )?Screen.width: 640
-    height: isMobileDevice( )?Screen.height:480
+    width: isMobileDevice( )?Screen.width: 800
+    height: isMobileDevice( )?Screen.height:800
     title: qsTr("Scroll")
     color:Qt.rgba(0,0,0,0)
     /*  ScrollView {
@@ -30,8 +30,8 @@ ApplicationWindow {
     Squircle {
         id: sq
         SequentialAnimation on t {
-            NumberAnimation { to: 1; duration: 2500; easing.type: Easing.InQuad }
-            NumberAnimation { to: 0; duration: 2500; easing.type: Easing.OutQuad }
+            NumberAnimation { to: 1; duration: 1000; easing.type: Easing.InQuad }
+            NumberAnimation { to: 0; duration: 1000; easing.type: Easing.OutQuad }
             loops: Animation.Infinite
             running: true
         }
