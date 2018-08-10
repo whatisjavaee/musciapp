@@ -55,8 +55,8 @@
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLFunctions>
 #include<QTime>
-#include<QOpenGLBuffer>
-#include<QOpenGLVertexArrayObject>
+
+
 //! [1]
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
@@ -86,9 +86,6 @@ private:
     qreal m_t;
     QOpenGLShaderProgram* m_program;
     QQuickWindow* m_window;
-    QOpenGLBuffer               m_VertexBuffer, m_IndexBuffer;
-    QOpenGLVertexArrayObject m_object;
-
 };
 //! [1]
 

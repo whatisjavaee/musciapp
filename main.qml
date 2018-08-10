@@ -8,6 +8,7 @@ ApplicationWindow {
     width: isMobileDevice( )?Screen.width: 640
     height: isMobileDevice( )?Screen.height:480
     title: qsTr("Scroll")
+    color:Qt.rgba(0,0,0,0)
     /*  ScrollView {
         anchors.fill: parent
 
@@ -30,7 +31,7 @@ ApplicationWindow {
         id: sq
         SequentialAnimation on t {
             NumberAnimation { to: 1; duration: 2500; easing.type: Easing.InQuad }
-            //NumberAnimation { to: 0; duration: 2500; easing.type: Easing.OutQuad }
+            NumberAnimation { to: 0; duration: 2500; easing.type: Easing.OutQuad }
             loops: Animation.Infinite
             running: true
         }

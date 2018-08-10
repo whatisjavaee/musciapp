@@ -127,33 +127,61 @@ void SquircleRenderer::paint()
     if (!m_program)
     {
         initializeOpenGLFunctions();
-        m_program = new QOpenGLShaderProgram();
-        m_VertexBuffer.create();
-        GLfloat f[][2]
-        {
-            0, 0, 1, 1
-        };
-        m_VertexBuffer.bind();
-        m_VertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-        m_VertexBuffer.allocate(f, sizeof(f));
-        m_object.create();
-        m_object.bind();
-        m_object.release();
-        m_VertexBuffer.release();
 
+        m_program = new QOpenGLShaderProgram();
+        m_program->addCacheableShaderFromSourceCode(QOpenGLShader::Vertex,
+                "attribute highp vec4 vertices;"
+                "varying highp vec2 coords;"
+                "void main() {"
+                "    gl_Position = vertices;"
+                "    coords = vertices.xy;"
+                "}");
+        m_program->addCacheableShaderFromSourceCode(QOpenGLShader::Fragment,
+                "uniform lowp float t;"
+                "varying highp vec2 coords;"
+                "void main() {"
+                //"    lowp float i = 1. - (pow(abs(coords.x), 4.) + pow(abs(coords.y), 4.));"
+                //"    i = smoothstep(t - 0.8, t + 0.8, i);"
+                //"    i = floor(i * 20.) / 20.;"
+                "    gl_FragColor = vec4(abs(coords.x),abs(coords.y) , abs(coords.x)*abs(coords.y), t);"
+                "}");
+
+        m_program->bindAttributeLocation("vertices", 0);
+        m_program->link();
+        glClearColor(0, 0, 0, 0);
     }
+//! [4] //! [5]
+    m_program->bind();
+
+    m_program->enableAttributeArray(0);
+
+    float values[] =
+    {
+        -1, -1,
+            -1, 1,
+            1, 1,
+            1, -1
+        };
+    m_program->setAttributeArray(0, GL_FLOAT, values, 2);
+    m_program->setUniformValue("t", (float) m_t);
 
     glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
+
     glDisable(GL_DEPTH_TEST);
-    glClearColor(0, 0, 0, 1);
+
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
-    m_VertexBuffer.bind();
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_LINES, 0, 2);
+
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //qDebug() << QTime::currentTime();
+    glDrawArrays(GL_POLYGON, 0, 4);
+    //qDebug() << QTime::currentTime();
+    m_program->disableAttributeArray(0);
+    m_program->release();
 
     // Not strictly needed for this example, but generally useful for when
     // mixing with raw OpenGL.
     m_window->resetOpenGLState();
-    qDebug() << "paint" << QTime::currentTime();
 }
 //! [5]
