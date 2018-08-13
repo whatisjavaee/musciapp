@@ -33,3 +33,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     filelineplayer.h \
     squircle.h
+
+DISTFILES += \
+    gl.vert \
+    simpleColor.frag

@@ -57,7 +57,7 @@
 #include<QTime>
 
 
-//! [1]
+
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
     Q_OBJECT
@@ -77,7 +77,7 @@ public:
     {
         m_window = window;
     }
-
+    void drawSingleColor(const void* values, GLenum mode, GLint first, GLsizei count, QVector4D color);
 public slots:
     void paint();
 
@@ -86,10 +86,10 @@ private:
     qreal m_t;
     QOpenGLShaderProgram* m_program;
     QQuickWindow* m_window;
+    //单色着色器
+    QOpenGLShaderProgram* m_singleColorProgram;
 };
-//! [1]
 
-//! [2]
 class Squircle : public QQuickItem
 {
     Q_OBJECT
@@ -118,6 +118,5 @@ private:
     qreal m_t;
     SquircleRenderer* m_renderer;
 };
-//! [2]
 
 #endif // SQUIRCLE_H

@@ -81,7 +81,6 @@ void Squircle::handleWindowChanged(QQuickWindow* win)
 
         // If we allow QML to do the clearing, they would clear what we paint
         // and nothing would show.
-
         win->setClearBeforeRendering(false);
     }
 }
@@ -117,34 +116,12 @@ void SquircleRenderer::paint()
     if (!m_program)
     {
         initializeOpenGLFunctions();
-
-        m_program = new QOpenGLShaderProgram();
-        m_program->addCacheableShaderFromSourceCode(QOpenGLShader::Vertex,
-                "in highp vec4 vertices;"
-                "out highp vec2 coords;"
-                "void main() {"
-                "   gl_Position = vertices;"
-                "   coords = vertices.xy;"
-                "}");
-        m_program->addCacheableShaderFromSourceCode(QOpenGLShader::Fragment,
-                "uniform lowp float t;"
-                "in highp vec2 coords;"
-                "void main() {"
-                "   gl_FragColor = vec4(abs(coords.x),0 , abs(coords.x), t);"
-                "}");
-
-        m_program->bindAttributeLocation("vertices", 0);
-        m_program->link();
-        glClearColor(0, 0, 0, 0);
+        //设置视图、清理背景
+        glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
+        glDisable(GL_DEPTH_TEST);
     }
-
-    glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
-    glDisable(GL_DEPTH_TEST);
-
-    m_program->bind();
-    m_program->enableAttributeArray(0);
-
-
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
     float values[] =
     {
         -0.5, -0.5,
@@ -156,17 +133,29 @@ void SquircleRenderer::paint()
             0.5, 0.5,
             1, 0.5
         };
-    m_program->setAttributeArray(0, GL_FLOAT, values, 2);
-    m_program->setUniformValue("t", (float) m_t);
 
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDrawArrays(GL_QUADS, 0, 8);
-    //qDebug() << QTime::currentTime();
-    m_program->disableAttributeArray(0);
-    m_program->release();
+    drawSingleColor(values, GL_QUADS, 0, 8, QVector4D(m_t, 0, 0, m_t));
 
     // Not strictly needed for this example, but generally useful for when
     // mixing with raw OpenGL.
     m_window->resetOpenGLState();
+}
+
+void SquircleRenderer::drawSingleColor(const void* values, GLenum mode, GLint first, GLsizei count, QVector4D color)
+{
+    if (!m_singleColorProgram)
+    {
+        m_singleColorProgram = new QOpenGLShaderProgram();
+        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, "C:\\Users\\tangxuegui\\Documents\\musciapp\\gl.vert");
+        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, "C:\\Users\\tangxuegui\\Documents\\musciapp\\simpleColor.frag");
+        m_singleColorProgram->bindAttributeLocation("vertices", 0);
+        m_singleColorProgram->link();
+    }
+    m_singleColorProgram->bind();
+    m_singleColorProgram->enableAttributeArray(0);
+    m_singleColorProgram->setAttributeArray(0, GL_FLOAT, values, 2);
+    m_singleColorProgram->setUniformValue("color", color);
+    glDrawArrays(mode, first, count);
+    m_singleColorProgram->disableAttributeArray(0);
+    m_singleColorProgram->release();
 }

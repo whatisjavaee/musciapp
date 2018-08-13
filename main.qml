@@ -6,9 +6,10 @@ import OpenGLUnderQML 1.0
 ApplicationWindow {
     visible: true
     width: isMobileDevice( )?Screen.width: 800
-    height: isMobileDevice( )?Screen.height:800
+    height: isMobileDevice( )?Screen.height:400
     title: qsTr("Scroll")
     color:Qt.rgba(0,0,0,0)
+
     /*  ScrollView {
         anchors.fill: parent
 
