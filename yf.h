@@ -12,5 +12,6 @@ public:
     //init
     int orderTime = 0;
     int result = -1;
+    QVector4D* color;
 };
 #endif // YF_H

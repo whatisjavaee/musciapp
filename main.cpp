@@ -12,5 +12,6 @@ int main(int argc, char* argv[])
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
+    qDebug() << "exe";
     return app.exec();
 }

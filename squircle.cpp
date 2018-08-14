@@ -123,7 +123,19 @@ void SquircleRenderer::paint()
     }
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    std::vector<float> v;
+
+    //绘制五线
+    float lines[]
+    {
+        -1, 2.0f / 25 * 10 - 1, 1, 2.0f / 25 * 10 - 1,
+            - 1, 2.0f / 25 * 11 - 1, 1, 2.0f / 25 * 11 - 1,
+            - 1, 2.0f / 25 * 12 - 1, 1, 2.0f / 25 * 12 - 1,
+            - 1, 2.0f / 25 * 13 - 1, 1, 2.0f / 25 * 13 - 1,
+            - 1, 2.0f / 25 * 14 - 1, 1, 2.0f / 25 * 14 - 1
+        };
+    this->drawSingleColor(lines, GL_LINES, 0, 10, QVector4D(0, 0, 0, 1));
+
+    //绘制条子
     double time = 500000.0 * m_t;
     std::list<YFData*>::iterator it;
     for (it = yFDataS.begin(); it != yFDataS.end(); it++)
@@ -139,15 +151,19 @@ void SquircleRenderer::paint()
             float x1 = 1 - timeJl * (2.0 / m_viewportSize.width());
             float x2 = 1 - timeJl * (2.0 / m_viewportSize.width()) + yfd->time / SPEED * (2.0 / m_viewportSize.width());
             x2 = x2 > 1 ? 1 : x2;
-            float y = yfd->musicLevel * (1.0 / 25) - 0.5;
+            float y = yfd->musicLevel * (2.0f / 25) / 2 - (2.0f / 25) * 5 ;
             float t[] =
             {
-                x1, y, x2, y, x2, y - 0.1, x1, y - 0.1
+                x1, y, x2, y,  x1, y - 2.0f / 25, x2, y - 2.0f / 25
             };
-            this->drawSingleColor(t, GL_QUADS, 0, 4, QVector4D(1, 1, 0, 1));
-            qDebug() << yfd->orderTime;
+            if (yfd->color == NULL)
+            {
+                yfd->color = new QVector4D(qrand() % 11 / 10.0, qrand() % 11 / 10.0, qrand() % 11 / 10.0, 1);
+            }
+            this->drawSingleColor(t, GL_TRIANGLE_STRIP, 0, 4, *yfd->color);
         }
     }
+
     // Not strictly needed for this example, but generally useful for when
     // mixing with raw OpenGL.
     m_window->resetOpenGLState();

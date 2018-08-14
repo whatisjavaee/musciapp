@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: isMobileDevice( )?Screen.width: 800
     height: isMobileDevice( )?Screen.height:400
-    title: qsTr("Scroll")
+    title: qsTr("test")
     color:Qt.rgba(0,0,0,0)
 
     Squircle {
