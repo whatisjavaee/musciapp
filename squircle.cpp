@@ -97,6 +97,7 @@ void Squircle::cleanup()
 SquircleRenderer::~SquircleRenderer()
 {
     delete m_program;
+    delete m_singleColorProgram;
 }
 
 void Squircle::sync()
@@ -120,22 +121,33 @@ void SquircleRenderer::paint()
         glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
         glDisable(GL_DEPTH_TEST);
     }
-    glClearColor(0, 0, 0, 0);
+    glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    float values[] =
+    std::vector<float> v;
+    double time = 500000.0 * m_t;
+    std::list<YFData*>::iterator it;
+    for (it = yFDataS.begin(); it != yFDataS.end(); it++)
     {
-        -0.5, -0.5,
-            -0.5, 0.5,
-            0.5, 0.5,
-            0.5, -0.5,
-            1, 1,
-            0.5, 1,
-            0.5, 0.5,
-            1, 0.5
-        };
-
-    drawSingleColor(values, GL_QUADS, 0, 8, QVector4D(m_t, 0, 0, m_t));
-
+        YFData* yfd = *it;
+        //新增
+        int maxTime = yfd->orderTime + yfd->time + m_viewportSize.width() * SPEED;
+        if (maxTime >= time && yfd->orderTime <= time)
+        {
+            yfd->result = 0;
+            float timeIn = time - yfd->orderTime;
+            float timeJl = timeIn / SPEED;
+            float x1 = 1 - timeJl * (2.0 / m_viewportSize.width());
+            float x2 = 1 - timeJl * (2.0 / m_viewportSize.width()) + yfd->time / SPEED * (2.0 / m_viewportSize.width());
+            x2 = x2 > 1 ? 1 : x2;
+            float y = yfd->musicLevel * (1.0 / 25) - 0.5;
+            float t[] =
+            {
+                x1, y, x2, y, x2, y - 0.1, x1, y - 0.1
+            };
+            this->drawSingleColor(t, GL_QUADS, 0, 4, QVector4D(1, 1, 0, 1));
+            qDebug() << yfd->orderTime;
+        }
+    }
     // Not strictly needed for this example, but generally useful for when
     // mixing with raw OpenGL.
     m_window->resetOpenGLState();
@@ -146,8 +158,8 @@ void SquircleRenderer::drawSingleColor(const void* values, GLenum mode, GLint fi
     if (!m_singleColorProgram)
     {
         m_singleColorProgram = new QOpenGLShaderProgram();
-        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, "C:\\Users\\tangxuegui\\Documents\\musciapp\\gl.vert");
-        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, "C:\\Users\\tangxuegui\\Documents\\musciapp\\simpleColor.frag");
+        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/gl.vert");
+        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, ":/simpleColor.frag");
         m_singleColorProgram->bindAttributeLocation("vertices", 0);
         m_singleColorProgram->link();
     }

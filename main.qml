@@ -1,6 +1,5 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
-import FileLinePlayer 1.0
 import QtQuick.Window 2.2
 import OpenGLUnderQML 1.0
 ApplicationWindow {
@@ -10,29 +9,10 @@ ApplicationWindow {
     title: qsTr("Scroll")
     color:Qt.rgba(0,0,0,0)
 
-    /*  ScrollView {
-        anchors.fill: parent
-
-        ListView {
-            width: parent.width
-            model: 20
-            delegate: ItemDelegate {
-                text: "Item " + (index + 1)
-                width: parent.width
-            }
-        }
-    }*/
-    //background: "FFFFFF"
-    //FileLinePlayer{
-    //    id:fPlayer
-    //    anchors.fill: parent
-    //}
-
     Squircle {
         id: sq
         SequentialAnimation on t {
-            NumberAnimation { to: 1; duration: 1000; easing.type: Easing.InQuad }
-            NumberAnimation { to: 0; duration: 1000; easing.type: Easing.OutQuad }
+            NumberAnimation { to: 1; duration: 500000; easing.type: Easing.Linear }
             loops: Animation.Infinite
             running: true
         }

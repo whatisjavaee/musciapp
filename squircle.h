@@ -55,14 +55,27 @@
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLFunctions>
 #include<QTime>
-
-
+#include"yf.h"
+#include<QSize>
 
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    SquircleRenderer() : m_t(0), m_program(0) { }
+    SquircleRenderer() : m_t(0), m_program(0)
+    {
+        int orderTime = 0;
+        for (int i = 0; i < 100; i++)
+        {
+            YFData* obj1 = new YFData();
+            obj1->musicLevel = qrand() % 25;
+            obj1->musicTime = qrand() % 3 + 1;
+            obj1->time = obj1->musicTime * 1000;
+            obj1->orderTime = orderTime;
+            orderTime = orderTime + obj1->time;
+            yFDataS.push_back(obj1);
+        }
+    }
     ~SquircleRenderer();
 
     void setT(qreal t)
@@ -88,6 +101,8 @@ private:
     QQuickWindow* m_window;
     //单色着色器
     QOpenGLShaderProgram* m_singleColorProgram;
+    std::list<YFData*> yFDataS;
+    const float SPEED = 20;
 };
 
 class Squircle : public QQuickItem

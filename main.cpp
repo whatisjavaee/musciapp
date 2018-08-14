@@ -1,6 +1,5 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "filelineplayer.h"
 #include "squircle.h"
 int main(int argc, char* argv[])
 {
@@ -9,7 +8,6 @@ int main(int argc, char* argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    qmlRegisterType<FileLinePlayer>("FileLinePlayer", 1, 0, "FileLinePlayer");
     qmlRegisterType<Squircle>("OpenGLUnderQML", 1, 0, "Squircle");
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
