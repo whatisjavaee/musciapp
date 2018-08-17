@@ -7,7 +7,7 @@ Squircle::Squircle()
 {
     connect(this, &QQuickItem::windowChanged, this, &Squircle::handleWindowChanged);
     timeLine = new QTimeLine(1000 * 60 * 30.0);
-    timeLine->setUpdateInterval(17);
+    timeLine->setUpdateInterval(1);
     this->connect(timeLine, &QTimeLine::valueChanged, this, &Squircle::setT);
 }
 
