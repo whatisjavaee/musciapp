@@ -51,12 +51,14 @@
 #ifndef SQUIRCLE_H
 #define SQUIRCLE_H
 
-#include <QtQuick/QQuickItem>
-#include <QtGui/QOpenGLShaderProgram>
-#include <QtGui/QOpenGLFunctions>
-#include<QTime>
-#include"yf.h"
-#include<QSize>
+#include <QQuickItem>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLFunctions>
+#include <QTime>
+#include <QSize>
+#include <QTimeLine>
+#include "yf.h"
+
 
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
@@ -65,12 +67,12 @@ public:
     SquircleRenderer() : m_t(0), m_program(0)
     {
         int orderTime = 0;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 200; i++)
         {
             YFData* obj1 = new YFData();
             obj1->musicLevel = qrand() % 25;
-            obj1->musicTime = qrand() % 3 + 1;
-            obj1->time = obj1->musicTime * 1000;
+            obj1->musicTime = qrand() % 4 + 1;
+            obj1->time = obj1->musicTime * 2000;
             obj1->orderTime = orderTime;
             orderTime = orderTime + obj1->time;
             yFDataS.push_back(obj1);
@@ -102,36 +104,51 @@ private:
     //单色着色器
     QOpenGLShaderProgram* m_singleColorProgram;
     std::list<YFData*> yFDataS;
-    const float SPEED = 20;
+public:
+    float SPEED = 20;
 };
 
 class Squircle : public QQuickItem
 {
     Q_OBJECT
-    Q_PROPERTY(qreal t READ t WRITE setT NOTIFY tChanged)
+    //Q_PROPERTY(qreal t READ t WRITE setT NOTIFY tChanged)
+    Q_PROPERTY(qreal sp READ sp WRITE setSp NOTIFY spChange)
 
 public:
     Squircle();
-
+    ~Squircle()
+    {
+        delete timeLine;
+    }
     qreal t() const
     {
         return m_t;
     }
-    void setT(qreal t);
+    void setT();
+    qreal sp() const
+    {
+        return m_sp;
+    }
+    void setSp(qreal sp);
 
 signals:
     void tChanged();
+    void spChange();
 
 public slots:
     void sync();
     void cleanup();
+    void start();
+    void stop();
 
 private slots:
     void handleWindowChanged(QQuickWindow* win);
 
 private:
     qreal m_t;
+    qreal m_sp;
     SquircleRenderer* m_renderer;
+    QTimeLine* timeLine;
 };
 
 #endif // SQUIRCLE_H
