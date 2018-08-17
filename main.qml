@@ -53,21 +53,6 @@ ApplicationWindow {
             anchors.left: yf.right
             text:"方块"
         }
-        Button{
-            id:panio
-            anchors.left: fk.right
-            text:"钢琴"
-        }
-        Button{
-            id:jt
-            anchors.left: panio.right
-            text:"弦类乐器"
-        }
-        Button{
-            id:gl
-            anchors.left: jt.right
-            text:"管类乐器"
-        }
     }
     function isMobileDevice( )// 判断是否是移动平台
     {
