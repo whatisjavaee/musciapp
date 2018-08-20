@@ -77,6 +77,7 @@ public:
             orderTime = orderTime + obj1->time;
             yFDataS.push_back(obj1);
         }
+        YFData::initTime(yFDataS, 60);
     }
     ~SquircleRenderer();
 

@@ -69,7 +69,7 @@ void Squircle::sync()
     }
     m_renderer->setViewportSize(window()->size() * window()->devicePixelRatio());
     m_renderer->setT(m_t);
-    m_renderer->SPEED = m_sp;
+    m_renderer->SPEED = (1000 * 60 / 60) / (window()->size().width() / 25.0) ;
     m_renderer->setWindow(window());
 }
 
@@ -119,6 +119,7 @@ void SquircleRenderer::paint()
             };
             if (yfd->color == NULL)
             {
+                // qDebug() << "add" << " " << yfd->orderTime;
                 yfd->color = new QVector4D(qrand() % 11 / 10.0, qrand() % 11 / 10.0, qrand() % 11 / 10.0, 1);
             }
             this->drawSingleColor(t, GL_TRIANGLE_STRIP, 0, 4, *yfd->color);
