@@ -7,7 +7,7 @@ Squircle::Squircle()
 {
     connect(this, &QQuickItem::windowChanged, this, &Squircle::handleWindowChanged);
     timeLine = new QTimeLine(1000 * 60 * 30.0);
-    timeLine->setUpdateInterval(1);
+    timeLine->setUpdateInterval(5);
     this->connect(timeLine, &QTimeLine::valueChanged, this, &Squircle::setT);
 }
 
@@ -69,7 +69,7 @@ void Squircle::sync()
     }
     m_renderer->setViewportSize(window()->size() * window()->devicePixelRatio());
     m_renderer->setT(m_t);
-    m_renderer->SPEED = (1000 * 60 / 60) / (window()->size().width() / 25.0) ;
+    m_renderer->SPEED = (1000 * 60 / 120) / (window()->size().height() / 25.0 * 2) ;
     m_renderer->setWindow(window());
 }
 

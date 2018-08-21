@@ -66,18 +66,14 @@ class SquircleRenderer : public QObject, protected QOpenGLFunctions
 public:
     SquircleRenderer() : m_t(0), m_program(0)
     {
-        int orderTime = 0;
         for (int i = 0; i < 200; i++)
         {
             YFData* obj1 = new YFData();
             obj1->musicLevel = qrand() % 25;
             obj1->musicTime = qrand() % 4 + 1;
-            obj1->time = obj1->musicTime * 2000;
-            obj1->orderTime = orderTime;
-            orderTime = orderTime + obj1->time;
             yFDataS.push_back(obj1);
         }
-        YFData::initTime(yFDataS, 60);
+        YFData::initTime(yFDataS, 120);
     }
     ~SquircleRenderer();
 
