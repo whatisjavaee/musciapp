@@ -14,14 +14,29 @@ ApplicationWindow {
         width: parent.width
         anchors.bottom: start.top
     }
-    Text{
-        id:df
+    Grid{
         anchors.right: parent.right
-        text: "得分"
-    }
-    Text{
-        anchors.right: df.right
-        text: "得分"
+        rows:1
+        columns: 5
+        columnSpacing: 4;
+        flow:Grid.TopToBottom
+        Text{
+            font.pixelSize: 30
+            text: "得分:"
+        }
+        Text{
+            font.pixelSize: 30
+            text: "0"
+        }
+        Text{
+            font.pixelSize: 30
+            text: "连击:"
+        }
+        Text{
+            id:lj
+            text: "0"
+            font.pixelSize: 30
+        }
     }
     Button{
         id:start
@@ -62,6 +77,12 @@ ApplicationWindow {
         anchors.left: yf.right
         anchors.top: start.top
         text:"方块"
+    }
+    Button{
+        id:rt
+        anchors.left: fk.right
+        anchors.top: start.top
+        text:"返回"
     }
     function isMobileDevice( )// 判断是否是移动平台
     {
