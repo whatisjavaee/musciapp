@@ -73,7 +73,7 @@ public:
             obj1->musicTime = qrand() % 4 + 1;
             yFDataS.push_back(obj1);
         }
-        YFData::initTime(yFDataS, 120);
+        YFData::initTime(yFDataS, 60);
     }
     ~SquircleRenderer();
 
@@ -92,7 +92,6 @@ public:
     void drawSingleColor(const void* values, GLenum mode, GLint first, GLsizei count, QVector4D color);
 public slots:
     void paint();
-
 private:
     QSize m_viewportSize;
     qreal m_t;
@@ -100,9 +99,10 @@ private:
     QQuickWindow* m_window;
     //单色着色器
     QOpenGLShaderProgram* m_singleColorProgram;
-    std::list<YFData*> yFDataS;
+
 public:
     float SPEED = 20;
+    std::list<YFData*> yFDataS;
 };
 
 class Squircle : public QQuickItem
@@ -143,7 +143,7 @@ private slots:
 
 private:
     qreal m_t;
-    qreal m_sp;
+    qreal m_sp = 60.0;
     SquircleRenderer* m_renderer;
     QTimeLine* timeLine;
 };

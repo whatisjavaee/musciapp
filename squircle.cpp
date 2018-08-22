@@ -7,7 +7,7 @@ Squircle::Squircle()
 {
     connect(this, &QQuickItem::windowChanged, this, &Squircle::handleWindowChanged);
     timeLine = new QTimeLine(1000 * 60 * 30.0);
-    timeLine->setUpdateInterval(5);
+    timeLine->setUpdateInterval(17);
     this->connect(timeLine, &QTimeLine::valueChanged, this, &Squircle::setT);
 }
 
@@ -23,6 +23,11 @@ void Squircle::setSp(qreal sp)
     if (sp == m_sp)
         return;
     m_sp = sp;
+    if (m_renderer != NULL)
+    {
+        YFData::initTime(m_renderer->yFDataS, m_sp);
+        qDebug() << m_sp;
+    }
     emit spChange();
 }
 void Squircle::handleWindowChanged(QQuickWindow* win)
@@ -69,7 +74,8 @@ void Squircle::sync()
     }
     m_renderer->setViewportSize(window()->size() * window()->devicePixelRatio());
     m_renderer->setT(m_t);
-    m_renderer->SPEED = (1000 * 60 / 120) / (window()->size().height() / 25.0 * 2) ;
+    //每个像素需要的时间=每拍时间/每拍像素长度
+    m_renderer->SPEED = (1000 * 60 / m_sp) / (window()->size().height() / 25.0 * 4) ;
     m_renderer->setWindow(window());
 }
 
@@ -92,9 +98,10 @@ void SquircleRenderer::paint()
             - 1, 2.0f / 25 * 11 - 1, 1, 2.0f / 25 * 11 - 1,
             - 1, 2.0f / 25 * 12 - 1, 1, 2.0f / 25 * 12 - 1,
             - 1, 2.0f / 25 * 13 - 1, 1, 2.0f / 25 * 13 - 1,
-            - 1, 2.0f / 25 * 14 - 1, 1, 2.0f / 25 * 14 - 1
+            - 1, 2.0f / 25 * 14 - 1, 1, 2.0f / 25 * 14 - 1,
+            1 / 4.0 - 1, 2.0f / 25 * 5 - 1, 1 / 4.0 - 1, 2.0f / 25 * 19 - 1
         };
-    this->drawSingleColor(lines, GL_LINES, 0, 10, QVector4D(0, 0, 0, 1));
+    this->drawSingleColor(lines, GL_LINES, 0, 12, QVector4D(0, 0, 0, 1));
 
     //绘制条子
     double time =  m_t;

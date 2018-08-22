@@ -9,10 +9,19 @@ ApplicationWindow {
     title: qsTr("test")
     Squircle {
         id:sq
-        sp:10
+        sp:61
         anchors.top: parent.top;
         width: parent.width
         anchors.bottom: start.top
+    }
+    Text{
+        id:df
+        anchors.right: parent.right
+        text: "得分"
+    }
+    Text{
+        anchors.right: df.right
+        text: "得分"
     }
     Button{
         id:start
