@@ -17,7 +17,7 @@ ApplicationWindow {
     Grid{
         anchors.right: parent.right
         rows:1
-        columns: 5
+        columns: 6
         columnSpacing: 4;
         flow:Grid.TopToBottom
         Text{
@@ -25,6 +25,7 @@ ApplicationWindow {
             text: "得分:"
         }
         Text{
+            id:df
             font.pixelSize: 30
             text: "0"
         }
@@ -34,6 +35,15 @@ ApplicationWindow {
         }
         Text{
             id:lj
+            text: "0"
+            font.pixelSize: 30
+        }
+        Text{
+            font.pixelSize: 30
+            text: "错误:"
+        }
+        Text{
+            id:cw
             text: "0"
             font.pixelSize: 30
         }
