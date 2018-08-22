@@ -9,6 +9,24 @@ Squircle::Squircle()
     timeLine = new QTimeLine(1000 * 60 * 30.0);
     timeLine->setUpdateInterval(17);
     this->connect(timeLine, &QTimeLine::valueChanged, this, &Squircle::setT);
+
+    m_device = QAudioDeviceInfo::defaultInputDevice();
+    m_format.setSampleRate(8000);
+    m_format.setChannelCount(1);
+    m_format.setSampleSize(16);
+    m_format.setSampleType(QAudioFormat::SignedInt);
+    m_format.setByteOrder(QAudioFormat::LittleEndian);
+    m_format.setCodec("audio/pcm");
+    if (!m_device.isFormatSupported(m_format))
+    {
+        qWarning() << "Default format not supported, trying to use the nearest.";
+        m_format = m_device.nearestFormat(m_format);
+    }
+    qDebug() << m_device.isNull();
+    qDebug() << m_device.supportedCodecs();
+    m_audioInfo = new AudioInfo(m_format, this);
+    connect(m_audioInfo, SIGNAL(update(int*)), SLOT(dataInput(int*)));
+    m_audioInput = new QAudioInput(m_device, m_format, this);
 }
 
 void Squircle::setT()
@@ -54,11 +72,62 @@ void Squircle::cleanup()
 void Squircle::start()
 {
     timeLine->start();
+    m_audioInfo->start();
+    m_audioInput->start(m_audioInfo);
 }
 void Squircle::stop()
 {
     timeLine->stop();
+    m_audioInfo->stop();
+    m_audioInput->stop();
 }
+void Squircle::dataInput(int* peaks)
+{
+    int time  = timeLine->currentTime();
+    std::list<YFData*>::iterator it;
+    for (it = m_renderer->yFDataS.begin(); it != m_renderer->yFDataS.end(); it++)
+    {
+        YFData* yfd = *it;
+        //新增
+        int startTime = yfd->orderTime + window()->width() / 8.0 * 7  * m_renderer->SPEED;
+        int maxTime = startTime + yfd->time ;
+        if (maxTime >= time && startTime <= time)
+        {
+            //当前音符频率
+            int key = levelData[yfd->musicLevel];
+            int flag = false;
+            for (int i = 0; i < 5; i++)
+            {
+                //计算频率
+                double f = m_format.sampleRate() * peaks[i] / 1024.0;
+                //偏差在5%以内
+                if (abs(f - key) / key < 0.05)
+                {
+                    flag = true;
+                    yfd->result = 1;
+                    if (NULL != yfd->color)
+                    {
+                        delete yfd->color;
+                        yfd->color = new QVector4D(0, 1, 0, 1);
+                    }
+                }
+                qDebug() << f;
+            }
+            qDebug() << yfd->color << " " << yfd->result;
+            if (NULL != yfd->color && yfd->result == 0)
+            {
+                delete yfd->color;
+                yfd->color = new QVector4D(1, 0, 0, 1);
+                yfd->result = 1;
+                //  qDebug() << "设置颜色";
+            }
+            // qDebug() << "当前" << yfd->orderTime;
+        }
+    }
+    delete peaks;
+}
+
+
 SquircleRenderer::~SquircleRenderer()
 {
     delete m_program;

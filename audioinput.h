@@ -58,7 +58,7 @@ class AudioInfo : public QIODevice
     Q_OBJECT
 
 public:
-    AudioInfo(const QAudioFormat &format, QObject *parent);
+    AudioInfo(const QAudioFormat& format, QObject* parent);
     ~AudioInfo();
 
     void start();
@@ -69,8 +69,8 @@ public:
         return m_level;
     }
 
-    qint64 readData(char *data, qint64 maxlen) override;
-    qint64 writeData(const char *data, qint64 len) override;
+    qint64 readData(char* data, qint64 maxlen) override;
+    qint64 writeData(const char* data, qint64 len) override;
 
 private:
     const QAudioFormat m_format;
@@ -78,7 +78,7 @@ private:
     qreal m_level; // 0.0 <= m_level <= 1.0
 
 signals:
-    void update();
+    void update(int* pearks);
 };
 
 #endif // AUDIOINPUT_H

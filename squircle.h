@@ -57,7 +57,9 @@
 #include <QTime>
 #include <QSize>
 #include <QTimeLine>
+#include <QAudioDeviceInfo>
 #include "yf.h"
+#include "audioinput.h"
 
 
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
@@ -69,7 +71,7 @@ public:
         for (int i = 0; i < 200; i++)
         {
             YFData* obj1 = new YFData();
-            obj1->musicLevel = qrand() % 25;
+            obj1->musicLevel = 9;
             obj1->musicTime = qrand() % 4 + 1;
             yFDataS.push_back(obj1);
         }
@@ -137,7 +139,7 @@ public slots:
     void cleanup();
     void start();
     void stop();
-
+    void dataInput(int* peaks);
 private slots:
     void handleWindowChanged(QQuickWindow* win);
 
@@ -146,6 +148,10 @@ private:
     qreal m_sp = 60.0;
     SquircleRenderer* m_renderer;
     QTimeLine* timeLine;
+    QAudioDeviceInfo m_device;
+    AudioInfo* m_audioInfo;
+    QAudioInput* m_audioInput;
+    QAudioFormat m_format;
 };
 
 #endif // SQUIRCLE_H

@@ -201,16 +201,15 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
                 ptr += channelBytes;
             }
         }
-        qDebug() << "fft:" << QTime::currentTime();
+        // qDebug() << "fft:" << QTime::currentTime();
         double* result = Calculate(&data[0], 1024);
-        int* peaks = FindPeaks(result, 1, 1024, 5);
-        qDebug() << QTime::currentTime();
-        qDebug() << "zxg:";
+        int* peaks = FindPeaks(result, 20, 1024, 5);
+        //qDebug() << QTime::currentTime();
+        //qDebug() << "zxg:";
         delete[] result;
-        delete[] peaks;
+        emit update(peaks);
         // maxValue = qMin(maxValue, m_maxAmplitude);
         // m_level = qreal(maxValue) / m_maxAmplitude;
     }
-    emit update();
     return len;
 }

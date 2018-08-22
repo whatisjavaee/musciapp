@@ -1,4 +1,4 @@
-QT += quick
+QT += quick multimedia
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -14,7 +14,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    squircle.cpp
+    squircle.cpp \
+    audioinput.cpp \
+    complex.cpp \
+    fftalgorithm.cpp
 
 RESOURCES += qml.qrc\
 opengl.qrc
@@ -32,4 +35,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     squircle.h \
-    yf.h
+    yf.h \
+    audioinput.h \
+    complex.h \
+    fftalgorithm.h
