@@ -89,13 +89,12 @@ void Squircle::dataInput(int* peaks)
     {
         YFData* yfd = *it;
         //新增
-        int startTime = yfd->orderTime + window()->width() / 8.0 * 7  * m_renderer->SPEED;
+        int startTime = yfd->orderTime + (2 / 8.0 * 7)  * m_renderer->SPEED;
         int maxTime = startTime + yfd->time ;
         if (maxTime >= time && startTime <= time)
         {
             //当前音符频率
-            int key = levelData[yfd->musicLevel];
-            int flag = false;
+            int key = levelCData[yfd->musicLevel];
             for (int i = 0; i < 5; i++)
             {
                 //计算频率
@@ -103,7 +102,6 @@ void Squircle::dataInput(int* peaks)
                 //偏差在5%以内
                 if (abs(f - key) / key < 0.05)
                 {
-                    flag = true;
                     yfd->result = 1;
                     if (NULL != yfd->color)
                     {
@@ -144,7 +142,7 @@ void Squircle::sync()
     m_renderer->setViewportSize(window()->size() * window()->devicePixelRatio());
     m_renderer->setT(m_t);
     //每个像素需要的时间=每拍时间/每拍像素长度
-    m_renderer->SPEED = (1000 * 60 / m_sp) / (window()->size().height() / 25.0 * 4) ;
+    m_renderer->SPEED = (1000 * 60 / m_sp) / (2 / 60.0 * 4) ;
     m_renderer->setWindow(window());
 }
 
@@ -153,10 +151,10 @@ void SquircleRenderer::paint()
     if (!m_program)
     {
         initializeOpenGLFunctions();
-        //设置视图、清理背景
-        glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
-        glDisable(GL_DEPTH_TEST);
     }
+    //设置视图、清理背景
+    glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
+    glDisable(GL_DEPTH_TEST);
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -179,14 +177,14 @@ void SquircleRenderer::paint()
     {
         YFData* yfd = *it;
         //新增
-        int maxTime = yfd->orderTime + yfd->time + m_viewportSize.width() * SPEED;
+        int maxTime = yfd->orderTime + yfd->time + 2 * SPEED;
         if (maxTime >= time && yfd->orderTime <= time)
         {
             yfd->result = 0;
             float timeIn = time - yfd->orderTime;
             float timeJl = timeIn / SPEED;
-            float x1 = 1 - timeJl * (2.0 / m_viewportSize.width());
-            float x2 = 1 - timeJl * (2.0 / m_viewportSize.width()) + yfd->time / SPEED * (2.0 / m_viewportSize.width());
+            float x1 = 1 - timeJl;
+            float x2 = 1 - timeJl  + yfd->time / SPEED;
             x2 = x2 > 1 ? 1 : x2;
             float y = yfd->musicLevel * (2.0f / 25) / 2 - (2.0f / 25) * 5 ;
             float t[] =

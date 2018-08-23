@@ -29,7 +29,7 @@ public:
     }
 
 };
-const double levelData[50] =
+const double levelCData[50] =
 {
     0, 0,
     220.0,

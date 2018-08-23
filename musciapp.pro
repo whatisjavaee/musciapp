@@ -39,3 +39,4 @@ HEADERS += \
     audioinput.h \
     complex.h \
     fftalgorithm.h
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

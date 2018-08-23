@@ -4,8 +4,8 @@ import QtQuick.Window 2.2
 import OpenGLUnderQML 1.0
 ApplicationWindow {
     visible: true
-    width: isMobileDevice( )?Screen.width: 1000
-    height: isMobileDevice( )?Screen.height:600
+    width: isMobileDevice( )?Screen.width: 1920/2
+    height: isMobileDevice( )?Screen.height:1080/2
     title: qsTr("test")
     Squircle {
         id:sq
