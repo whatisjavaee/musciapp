@@ -205,12 +205,13 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
         if(maxValue<10000){
             return len;
         }
-        qDebug()<<maxValue;
-        // qDebug() << "fft:" << QTime::currentTime();
+        //qDebug()<<maxValue;
+        qDebug() << "fft:" << QTime::currentTime();
         double* result = Calculate(mydata, 2048*4);
+        qDebug() << "fft:" << QTime::currentTime();
         int* peaks = FindPeaks(result, 10, 2048*2, 10);
         //for(int i=0;i<1024;i++){
-           // qDebug()<<i<<" "<<result[i]<<" "<<mydata[i];
+        // qDebug()<<i<<" "<<result[i]<<" "<<mydata[i];
         //}
         //qDebug()<<peaks[0]<<" "<<peaks[1]<<" "<<peaks[2]<<" "<<peaks[3]<<" "<<peaks[4];
         //qDebug() << QTime::curren          tTime();
