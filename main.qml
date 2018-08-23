@@ -9,7 +9,7 @@ ApplicationWindow {
     title: qsTr("test")
     Squircle {
         id:sq
-        sp:61
+        sp:60
         anchors.top: parent.top;
         width: parent.width
         anchors.bottom: start.top
@@ -17,9 +17,18 @@ ApplicationWindow {
     Grid{
         anchors.right: parent.right
         rows:1
-        columns: 6
+        columns: 8
         columnSpacing: 4;
         flow:Grid.TopToBottom
+        Text{
+            font.pixelSize: 30
+            text: "速度:"
+        }
+        Text{
+            id:sd
+            font.pixelSize: 30
+            text: sq.sp
+        }
         Text{
             font.pixelSize: 30
             text: "得分:"
@@ -67,14 +76,14 @@ ApplicationWindow {
         anchors.left: stop.right
         anchors.top: start.top
         text:"加速"
-        onClicked: {sq.sp = sq.sp+1;}
+        onClicked: {sq.sp = sq.sp+1;sd.text=sq.sp}
     }
     Button{
         id:jians
         anchors.left: js.right
         anchors.top: start.top
         text:"减速"
-        onClicked: {sq.sp = sq.sp-1;}
+        onClicked: {sq.sp = sq.sp-1;sd.text=sq.sp}
     }
     Button{
         id:yf
