@@ -52,7 +52,7 @@
 #define AUDIOINPUT_H
 
 #include <QAudioInput>
-#include"fftalgorithm.h"
+#include "fftalgorithm.h"
 class AudioInfo : public QIODevice
 {
     Q_OBJECT

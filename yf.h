@@ -1,5 +1,6 @@
 #ifndef YF_H
 #define YF_H
+#include <math.h>
 
 class YFData
 {

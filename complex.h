@@ -1,6 +1,6 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
-#include<math.h>
+#include <math.h>
 class ComplexNumber
 {
 public:
@@ -8,10 +8,10 @@ public:
     ComplexNumber(double);
     ComplexNumber(double, double);
     void write() const;
-    ComplexNumber operator +(const ComplexNumber &) const;
-    ComplexNumber operator -(const ComplexNumber &) const;
-    ComplexNumber operator *(const ComplexNumber &) const;
-    ComplexNumber operator /(const ComplexNumber &) const;
+    ComplexNumber operator +(const ComplexNumber&) const;
+    ComplexNumber operator -(const ComplexNumber&) const;
+    ComplexNumber operator *(const ComplexNumber&) const;
+    ComplexNumber operator /(const ComplexNumber&) const;
     double AbsPower2()
     {
         return real * real + imag * imag;
