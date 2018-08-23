@@ -2,9 +2,11 @@
 #define FFTALGORITHM_H
 
 #include <math.h>
+#include <QtGlobal>
+#include <float.h>
 #include "complex.h"
-#include<QtGlobal>
-#define M_PI       3.14159265358979323846   // pi
+
+//#define M_PI       3.14159265358979323846   // pi
 /// <summary>
 /// Gets number of significat bytes.
 /// </summary>
