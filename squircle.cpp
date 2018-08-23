@@ -11,7 +11,7 @@ Squircle::Squircle()
     this->connect(timeLine, &QTimeLine::valueChanged, this, &Squircle::setT);
 
     m_device = QAudioDeviceInfo::defaultInputDevice();
-    m_format.setSampleRate(8000);
+    m_format.setSampleRate(44100);
     m_format.setChannelCount(1);
     m_format.setSampleSize(16);
     m_format.setSampleType(QAudioFormat::SignedInt);
@@ -22,8 +22,6 @@ Squircle::Squircle()
         qWarning() << "Default format not supported, trying to use the nearest.";
         m_format = m_device.nearestFormat(m_format);
     }
-    qDebug() << m_device.isNull();
-    qDebug() << m_device.supportedCodecs();
     m_audioInfo = new AudioInfo(m_format, this);
     connect(m_audioInfo, SIGNAL(update(int*)), SLOT(dataInput(int*)));
     m_audioInput = new QAudioInput(m_device, m_format, this);
@@ -95,10 +93,11 @@ void Squircle::dataInput(int* peaks)
         {
             //当前音符频率
             int key = levelCData[yfd->musicLevel];
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 //计算频率
-                double f = m_format.sampleRate() * peaks[i] / 1024.0;
+                double f = m_format.sampleRate() * peaks[i] / (2048.0*4);
+                qDebug()<<f;
                 //偏差在5%以内
                 if (abs(f - key) / key < 0.05)
                 {
@@ -109,7 +108,7 @@ void Squircle::dataInput(int* peaks)
                         yfd->color = new QVector4D(0, 1, 0, 1);
                     }
                 }
-                qDebug() << f;
+                //qDebug() << f;
             }
             qDebug() << yfd->color << " " << yfd->result;
             if (NULL != yfd->color && yfd->result == 0)

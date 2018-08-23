@@ -149,7 +149,7 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
 
         quint32 maxValue = 0;
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(data);
-        double data[1024];
+        double mydata[2048*4] ={0};
         for (int i = 0; i < numSamples; ++i)
         {
             for (int j = 0; j < m_format.channelCount(); ++j)
@@ -196,15 +196,24 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
                 {
                     value = qAbs(*reinterpret_cast<const float*>(ptr) * 0x7fffffff); // assumes 0-1.0
                 }
-                data[i] = value;
-                //maxValue = qMax(value, maxValue);
+                mydata[i] = value;
+                //qDebug()<<value;
+                maxValue = qMax(value, maxValue);
                 ptr += channelBytes;
             }
         }
+        if(maxValue<10000){
+            return len;
+        }
+        qDebug()<<maxValue;
         // qDebug() << "fft:" << QTime::currentTime();
-        double* result = Calculate(&data[0], 1024);
-        int* peaks = FindPeaks(result, 20, 1024, 5);
-        //qDebug() << QTime::currentTime();
+        double* result = Calculate(mydata, 2048*4);
+        int* peaks = FindPeaks(result, 10, 2048*2, 10);
+        //for(int i=0;i<1024;i++){
+           // qDebug()<<i<<" "<<result[i]<<" "<<mydata[i];
+        //}
+        //qDebug()<<peaks[0]<<" "<<peaks[1]<<" "<<peaks[2]<<" "<<peaks[3]<<" "<<peaks[4];
+        //qDebug() << QTime::curren          tTime();
         //qDebug() << "zxg:";
         delete[] result;
         emit update(peaks);
