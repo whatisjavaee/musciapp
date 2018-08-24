@@ -81,6 +81,7 @@ void Squircle::stop()
 }
 void Squircle::dataInput(int* peaks)
 {
+
     int time  = timeLine->currentTime();
     std::list<YFData*>::iterator it;
     for (it = m_renderer->yFDataS.begin(); it != m_renderer->yFDataS.end(); it++)
@@ -97,7 +98,6 @@ void Squircle::dataInput(int* peaks)
             {
                 //计算频率
                 double f = m_format.sampleRate() * peaks[i] / (2048.0*4);
-                qDebug()<<f;
                 //偏差在5%以内
                 if (abs(f - key) / key < 0.05)
                 {
@@ -108,9 +108,7 @@ void Squircle::dataInput(int* peaks)
                         yfd->color = new QVector4D(0, 1, 0, 1);
                     }
                 }
-                //qDebug() << f;
             }
-            qDebug() << yfd->color << " " << yfd->result;
             if (NULL != yfd->color && yfd->result == 0)
             {
                 delete yfd->color;

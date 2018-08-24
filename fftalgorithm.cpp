@@ -288,3 +288,31 @@ double FindFundamentalFrequency(double* x, int length, int sampleRate,
     // std::cout<<endl<<"minOptimalInterval:"<<minOptimalInterval<<"";
     return (double) sampleRate / minOptimalInterval;
 }
+void cutNotPeak(double* values, int index, int length){
+    int t[length];
+    for(int i = index;i<length-1;i++){
+        if(values[i]>values[i+1] && values[i]>values[i-1]){
+            t[i] = 1;
+        }else{
+            t[i] = 0;
+        }
+    }
+    for(int i = index;i<length-1;i++){
+        values[i] = t[i]*values[i];
+    }
+    if(values[length-1]<values[length-2]){
+        values[length-1]=0;
+    }
+}
+void zxg(double* values,int start,int end,int length){
+    //double* result =new double[length]{0};
+    for(int i = start;i<=end;i++){
+        float sum =0;
+        for(int k=start;k<length;k++){
+            sum +=  values[k]*values[k-start];
+        }
+       // result[i] = sum;
+        qDebug()<<sum/(length-start)<<" "<<i;
+    }
+   // delete[] result;
+}

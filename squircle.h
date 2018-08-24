@@ -60,7 +60,7 @@
 #include <QAudioDeviceInfo>
 #include "yf.h"
 #include "audioinput.h"
-
+#include<iostream>
 
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {

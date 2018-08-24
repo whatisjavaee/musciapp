@@ -5,7 +5,7 @@
 #include <math.h>
 #include <float.h>
 #include "complex.h"
-
+#include<QDebug>
 /// <summary>
 /// Gets number of significat bytes.
 /// </summary>
@@ -61,4 +61,7 @@ int findMaxPeak(double* values, int values_length, int* peak, int peak_length);
 double FindFundamentalFrequency(double* x, int length, int sampleRate,
                                 double minFreq, double maxFreq, double& result);
 
+void cutNotPeak(double* values, int index, int length);
+
+void zxg(double* values,int start,int end,int length);
 #endif // FFTALGORITHM
