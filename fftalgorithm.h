@@ -6,6 +6,9 @@
 #include <float.h>
 #include "complex.h"
 #include <QDebug>
+#ifndef M_PI
+#define M_PI       3.14159265358979323846
+#endif
 /// <summary>
 /// Gets number of significat bytes.
 /// </summary>
@@ -63,5 +66,5 @@ double FindFundamentalFrequency(double* x, int length, int sampleRate,
 
 void cutNotPeak(double* values, int index, int length);
 
-void zxg(double* values,int start,int end,int length);
+void zxg(double* values, int start, int end, int length);
 #endif // FFTALGORITHM
