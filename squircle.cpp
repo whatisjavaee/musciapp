@@ -125,6 +125,7 @@ void Squircle::dataInput(int* peaks)
 
 SquircleRenderer::~SquircleRenderer()
 {
+    qDebug()<<6;
     delete m_program;
     delete m_singleColorProgram;
 }
@@ -145,9 +146,18 @@ void Squircle::sync()
 
 void SquircleRenderer::paint()
 {
-    if (!m_program)
+    if (m_singleColorProgram == NULL)
     {
-        initializeOpenGLFunctions();
+        mutex.lock();
+        if(m_singleColorProgram == NULL){
+            initializeOpenGLFunctions();
+            m_singleColorProgram = new QOpenGLShaderProgram();
+            m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/gl.vert");
+            m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, ":/simpleColor.frag");
+            m_singleColorProgram->bindAttributeLocation("vertices", 0);
+            m_singleColorProgram->link();
+        }
+        mutex.unlock();
     }
     //设置视图、清理背景
     glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
@@ -204,14 +214,6 @@ void SquircleRenderer::paint()
 
 void SquircleRenderer::drawSingleColor(const void* values, GLenum mode, GLint first, GLsizei count, QVector4D color)
 {
-    if (!m_singleColorProgram)
-    {
-        m_singleColorProgram = new QOpenGLShaderProgram();
-        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/gl.vert");
-        m_singleColorProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, ":/simpleColor.frag");
-        m_singleColorProgram->bindAttributeLocation("vertices", 0);
-        m_singleColorProgram->link();
-    }
     m_singleColorProgram->bind();
     m_singleColorProgram->enableAttributeArray(0);
     m_singleColorProgram->setAttributeArray(0, GL_FLOAT, values, 2);

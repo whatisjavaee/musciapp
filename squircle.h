@@ -61,6 +61,7 @@
 #include "yf.h"
 #include "audioinput.h"
 #include<iostream>
+#include <mutex>
 
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
@@ -100,7 +101,8 @@ private:
     QOpenGLShaderProgram* m_program;
     QQuickWindow* m_window;
     //单色着色器
-    QOpenGLShaderProgram* m_singleColorProgram;
+    QOpenGLShaderProgram* m_singleColorProgram = NULL;
+    std::mutex mutex;
 
 public:
     float SPEED = 20;
@@ -146,11 +148,11 @@ private slots:
 private:
     qreal m_t;
     qreal m_sp = 60.0;
-    SquircleRenderer* m_renderer;
-    QTimeLine* timeLine;
+    SquircleRenderer* m_renderer = NULL;
+    QTimeLine* timeLine = NULL;
     QAudioDeviceInfo m_device;
-    AudioInfo* m_audioInfo;
-    QAudioInput* m_audioInput;
+    AudioInfo* m_audioInfo = NULL;
+    QAudioInput* m_audioInput = NULL;
     QAudioFormat m_format;
 };
 

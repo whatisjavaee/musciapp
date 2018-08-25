@@ -5,7 +5,7 @@
 #include <math.h>
 #include <float.h>
 #include "complex.h"
-#include<QDebug>
+#include <QDebug>
 /// <summary>
 /// Gets number of significat bytes.
 /// </summary>
