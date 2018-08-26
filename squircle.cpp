@@ -23,7 +23,7 @@ Squircle::Squircle()
         m_format = m_device.nearestFormat(m_format);
     }
     m_audioInfo = new AudioInfo(m_format, this);
-    connect(m_audioInfo, SIGNAL(update(int*)), SLOT(dataInput(int*)));
+    connect(m_audioInfo, SIGNAL(update(std::vector<Peak>)), SLOT(dataInput(std::vector<Peak>)));
     m_audioInput = new QAudioInput(m_device, m_format, this);
 }
 
@@ -79,8 +79,9 @@ void Squircle::stop()
     m_audioInfo->stop();
     m_audioInput->stop();
 }
-void Squircle::dataInput(int* peaks)
+void Squircle::dataInput(std::vector<Peak> peaks)
 {
+    m_renderer->peaks = peaks;
 
     int time  = timeLine->currentTime();
     std::list<YFData*>::iterator it;
@@ -92,34 +93,33 @@ void Squircle::dataInput(int* peaks)
         int maxTime = startTime + yfd->time ;
         if (maxTime >= time && startTime <= time)
         {
+            if(yfd->result == 0){
+                yfd->result = 1;
+            }
             //当前音符频率
-            int key = levelCData[yfd->musicLevel];
-            for (int i = 0; i < 10; i++)
+            double key = levelCData[yfd->musicLevel];
+            for (unsigned long i = 0; i < peaks.size(); i++)
             {
                 //计算频率
-                double f = m_format.sampleRate() * peaks[i] / (2048.0*4);
+                double f = m_format.sampleRate() * peaks[i].index / (AudioInfo::N);
                 //偏差在5%以内
-                if (abs(f - key) / key < 0.05)
+                if (abs(f - key) / key < 0.005)
                 {
-                    yfd->result = 1;
-                    if (NULL != yfd->color)
-                    {
-                        delete yfd->color;
-                        yfd->color = new QVector4D(0, 1, 0, 1);
+                    qDebug()<<f <<" " << key <<" "<<peaks[i].value;
+                    if(yfd->result != 2){
+                        yfd->result = 2;
+                        yfd->color = QVector4D(0, 1, 0, 1);
                     }
                 }
             }
-            if (NULL != yfd->color && yfd->result == 0)
+            //错误
+            if (yfd->result != 2)
             {
-                delete yfd->color;
-                yfd->color = new QVector4D(1, 0, 0, 1);
-                yfd->result = 1;
-                //  qDebug() << "设置颜色";
+                yfd->color =  QVector4D(1, 0, 0, 1);
+                yfd->result = 3;
             }
-            // qDebug() << "当前" << yfd->orderTime;
         }
     }
-    delete peaks;
 }
 
 
@@ -169,12 +169,12 @@ void SquircleRenderer::paint()
     float lines[]
     {
         -1, 2.0f / 25 * 10 - 1, 1, 2.0f / 25 * 10 - 1,
-            - 1, 2.0f / 25 * 11 - 1, 1, 2.0f / 25 * 11 - 1,
-            - 1, 2.0f / 25 * 12 - 1, 1, 2.0f / 25 * 12 - 1,
-            - 1, 2.0f / 25 * 13 - 1, 1, 2.0f / 25 * 13 - 1,
-            - 1, 2.0f / 25 * 14 - 1, 1, 2.0f / 25 * 14 - 1,
-            1 / 4.0 - 1, 2.0f / 25 * 5 - 1, 1 / 4.0 - 1, 2.0f / 25 * 19 - 1
-        };
+        - 1, 2.0f / 25 * 11 - 1, 1, 2.0f / 25 * 11 - 1,
+        - 1, 2.0f / 25 * 12 - 1, 1, 2.0f / 25 * 12 - 1,
+        - 1, 2.0f / 25 * 13 - 1, 1, 2.0f / 25 * 13 - 1,
+        - 1, 2.0f / 25 * 14 - 1, 1, 2.0f / 25 * 14 - 1,
+        1 / 4.0 - 1, 2.0f / 25 * 5 - 1, 1 / 4.0 - 1, 2.0f / 25 * 19 - 1
+    };
     this->drawSingleColor(lines, GL_LINES, 0, 12, QVector4D(0, 0, 0, 1));
 
     //绘制条子
@@ -187,7 +187,11 @@ void SquircleRenderer::paint()
         int maxTime = yfd->orderTime + yfd->time + 2 * SPEED;
         if (maxTime >= time && yfd->orderTime <= time)
         {
-            yfd->result = 0;
+            if (yfd->result == -1)
+            {
+                yfd->color = QVector4D(qrand() % 11 / 10.0, qrand() % 11 / 10.0, qrand() % 11 / 10.0, 1);
+                yfd->result = 0;
+            }
             float timeIn = time - yfd->orderTime;
             float timeJl = timeIn / SPEED;
             float x1 = 1 - timeJl;
@@ -198,12 +202,7 @@ void SquircleRenderer::paint()
             {
                 x1, y, x2, y,  x1, y - 2.0f / 25, x2, y - 2.0f / 25
             };
-            if (yfd->color == NULL)
-            {
-                // qDebug() << "add" << " " << yfd->orderTime;
-                yfd->color = new QVector4D(qrand() % 11 / 10.0, qrand() % 11 / 10.0, qrand() % 11 / 10.0, 1);
-            }
-            this->drawSingleColor(t, GL_TRIANGLE_STRIP, 0, 4, *yfd->color);
+            this->drawSingleColor(t, GL_TRIANGLE_STRIP, 0, 4, yfd->color);
         }
     }
 

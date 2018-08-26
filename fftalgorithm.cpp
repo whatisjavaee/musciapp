@@ -304,6 +304,15 @@ void cutNotPeak(double* values, int index, int length){
         values[length-1]=0;
     }
 }
+std::vector<Peak> findPeaks(double* values, int start, int end){
+  std::vector<Peak> v;
+  for(int i =start;i<=end;i++){
+      if(values[i]>values[i-1]&&values[i]>values[i+1]){
+          v.push_back(Peak(i,values[i]));
+      }
+  }
+  return v;
+}
 void zxg(double* values,int start,int end,int length){
     //double* result =new double[length]{0};
     for(int i = start;i<=end;i++){

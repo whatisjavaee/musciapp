@@ -9,6 +9,17 @@
 #ifndef M_PI
 #define M_PI       3.14159265358979323846
 #endif
+
+struct Peak
+{
+    int index;
+    double value;
+    Peak(int _index,double _value){
+        index = _index;
+        value = _value;
+    }
+};
+
 /// <summary>
 /// Gets number of significat bytes.
 /// </summary>
@@ -67,4 +78,6 @@ double FindFundamentalFrequency(double* x, int length, int sampleRate,
 void cutNotPeak(double* values, int index, int length);
 
 void zxg(double* values, int start, int end, int length);
+
+std::vector<Peak> findPeaks(double* values, int start, int end);
 #endif // FFTALGORITHM

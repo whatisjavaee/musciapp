@@ -149,7 +149,8 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
 
         quint32 maxValue = 0;
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(data);
-        double mydata[2048] ={0};
+
+        double mydata[AudioInfo::N] ={0};
         for (int i = 0; i < numSamples; ++i)
         {
             for (int j = 0; j < m_format.channelCount(); ++j)
@@ -202,33 +203,25 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
                 ptr += channelBytes;
             }
         }
-        if(maxValue<20000){
+        if(maxValue<10000){
             return len;
         }
-        //qDebug()<<maxValue;
-        //qDebug() << "fft:" << QTime::currentTime();
-        //double* result = Calculate(mydata, 2048);
-        zxg(mydata,40,1000,2048);
-        //qDebug() << "fft:" << QTime::currentTime();
-        //cutNotPeak(result, 10, 1024);.4
-        //int* peaks = FindPeaks(result, 10, 1024, 20);
-        //for (int i = 0; i < 20; i++){
-         //   double f = m_format.sampleRate() * (peaks[i] -1)/ (2048.0);
-         //   if(result[i]!=0){
-         //       qDebug()<<f<<"--"<<peaks[i]<<" "<<pow(result[i],0.1);
-         //   }
-       // }
-       // qDebug()<<"-------------------------";
-        //for(int i=0;i<1024;i++){
-        // qDebug()<<i<<" "<<result[i]<<" "<<mydata[i];
-        //}
-        //qDebug()<<peaks[0]<<" "<<peaks[1]<<" "<<peaks[2]<<" "<<peaks[3]<<" "<<peaks[4];
-        //qDebug() << QTime::curren          tTime();
-        //qDebug() << "zxg:";
-     //   delete[] result;
-      //  emit update(peaks);
-        // maxValue = qMin(maxValue, m_maxAmplitude);
-        // m_level = qreal(maxValue) / m_maxAmplitude;
+        //qDebug()<<QTime::currentTime();
+        double* result = Calculate(mydata, AudioInfo::N);
+        int maxLength = 5000/(m_format.sampleRate()/(AudioInfo::N+0.0));
+        int minLength = 200/(m_format.sampleRate()/(AudioInfo::N+0.0));
+        std::vector<Peak> peaks = findPeaks(result,minLength,maxLength);
+        //qDebug()<<peaks.size();
+        //qDebug()<<QTime::currentTime();
+        //qDebug()<<"--------------------";
+        for(int i= 0;i<peaks.size();i++){
+            Peak p = peaks[i];
+            if(pow(p.value,0.1)>=12){
+                //qDebug()<< result[i]<<" "<<p.index<<" "<<m_format.sampleRate()*p.index/(AudioInfo::N);
+            }
+        }
+        emit update(peaks);
+        delete[] result;
     }
     return len;
 }

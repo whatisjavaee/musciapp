@@ -62,7 +62,7 @@
 #include "audioinput.h"
 #include<iostream>
 #include <mutex>
-
+#include <string>
 class SquircleRenderer : public QObject, protected QOpenGLFunctions
 {
     Q_OBJECT
@@ -107,6 +107,7 @@ private:
 public:
     float SPEED = 20;
     std::list<YFData*> yFDataS;
+    std::vector<Peak> peaks;
 };
 
 class Squircle : public QQuickItem
@@ -141,7 +142,7 @@ public slots:
     void cleanup();
     void start();
     void stop();
-    void dataInput(int* peaks);
+    void dataInput(std::vector<Peak> peaks);
 private slots:
     void handleWindowChanged(QQuickWindow* win);
 

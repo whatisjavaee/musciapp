@@ -13,9 +13,9 @@ public:
     int time = 0;
     //init
     int orderTime = 0;
-    //初始化-1，绘制0，线上 1 正确 2 错误 2
+    //初始化-1，绘制0，线上 1 正确 2 错误 3
     int result = -1;
-    QVector4D* color;
+    QVector4D color;
     static void initTime(std::list<YFData*> yFDataS, int paishu)
     {
         int orderTime = 0;
@@ -69,4 +69,5 @@ const double levelCData[50] =
     3520 * pow(2, 9.0 / 12),
     3520 * pow(2, 11.0 / 12)
 };
+
 #endif // YF_H
