@@ -72,7 +72,8 @@ public:
         for (int i = 0; i < 200; i++)
         {
             YFData* obj1 = new YFData();
-            obj1->musicLevel = qrand() % 25;
+            //obj1->musicLevel = qrand() % 25;
+             obj1->musicLevel = 9;
             obj1->musicTime = qrand() % 4 + 1;
             yFDataS.push_back(obj1);
         }

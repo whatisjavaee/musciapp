@@ -102,10 +102,13 @@ void Squircle::dataInput(std::vector<Peak> peaks)
             {
                 //计算频率
                 double f = m_format.sampleRate() * peaks[i].index / (AudioInfo::N);
-                //偏差在5%以内
+                //偏差在0.5%以内
                 if (abs(f - key) / key < 0.005)
                 {
-                    qDebug()<<f <<" " << key <<" "<<peaks[i].value;
+                    qDebug()<<f <<" " << key <<" "<<" "<<peaks[i].index<<" "<<peaks[i].value;
+                    for (unsigned long j = 0; j < peaks.size(); j++){
+                        qDebug()<<peaks[j].index<<" "<<peaks[j].value;
+                    }
                     if(yfd->result != 2){
                         yfd->result = 2;
                         yfd->color = QVector4D(0, 1, 0, 1);

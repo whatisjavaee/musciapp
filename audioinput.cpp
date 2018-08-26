@@ -56,8 +56,6 @@
 #include <qendian.h>
 #include "audioinput.h"
 
-const int BufferSize = 4096;
-
 AudioInfo::AudioInfo(const QAudioFormat& format, QObject* parent)
     :   QIODevice(parent)
     ,   m_format(format)
@@ -203,23 +201,13 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
                 ptr += channelBytes;
             }
         }
-        if(maxValue<10000){
-            return len;
-        }
-        //qDebug()<<QTime::currentTime();
+        //if(maxValue<5000){
+        //    return len;
+        //}
         double* result = Calculate(mydata, AudioInfo::N);
         int maxLength = 5000/(m_format.sampleRate()/(AudioInfo::N+0.0));
         int minLength = 200/(m_format.sampleRate()/(AudioInfo::N+0.0));
         std::vector<Peak> peaks = findPeaks(result,minLength,maxLength);
-        //qDebug()<<peaks.size();
-        //qDebug()<<QTime::currentTime();
-        //qDebug()<<"--------------------";
-        for(int i= 0;i<peaks.size();i++){
-            Peak p = peaks[i];
-            if(pow(p.value,0.1)>=12){
-                //qDebug()<< result[i]<<" "<<p.index<<" "<<m_format.sampleRate()*p.index/(AudioInfo::N);
-            }
-        }
         emit update(peaks);
         delete[] result;
     }
