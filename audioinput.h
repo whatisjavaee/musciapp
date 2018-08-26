@@ -74,13 +74,14 @@ public:
     qint64 readData(char* data, qint64 maxlen) override;
     qint64 writeData(const char* data, qint64 len) override;
     static const int N = 2048 *4;
+    static const int sampleRate = 44100;
 private:
     const QAudioFormat m_format;
     quint32 m_maxAmplitude;
     qreal m_level; // 0.0 <= m_level <= 1.0
 
 signals:
-    void update(std::vector<Peak> pearks);
+    void update(double* pearks,quint32 maxValue);
 };
 
 #endif // AUDIOINPUT_H

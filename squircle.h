@@ -73,7 +73,8 @@ public:
         {
             YFData* obj1 = new YFData();
             //obj1->musicLevel = qrand() % 25;
-             obj1->musicLevel = 9;
+             obj1->musicLevel = 9 + qrand() % 10;
+            //obj1->musicLevel = 11;
             obj1->musicTime = qrand() % 4 + 1;
             yFDataS.push_back(obj1);
         }
@@ -107,14 +108,13 @@ private:
 
 public:
     float SPEED = 20;
-    std::list<YFData*> yFDataS;
+    std::vector<YFData*> yFDataS;
     std::vector<Peak> peaks;
 };
 
 class Squircle : public QQuickItem
 {
     Q_OBJECT
-    //Q_PROPERTY(qreal t READ t WRITE setT NOTIFY tChanged)
     Q_PROPERTY(qreal sp READ sp WRITE setSp NOTIFY spChange)
 
 public:
@@ -143,7 +143,7 @@ public slots:
     void cleanup();
     void start();
     void stop();
-    void dataInput(std::vector<Peak> peaks);
+    void dataInput(double* mydata,quint32 maxValue);
 private slots:
     void handleWindowChanged(QQuickWindow* win);
 

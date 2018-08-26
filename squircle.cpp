@@ -11,7 +11,7 @@ Squircle::Squircle()
     this->connect(timeLine, &QTimeLine::valueChanged, this, &Squircle::setT);
 
     m_device = QAudioDeviceInfo::defaultInputDevice();
-    m_format.setSampleRate(44100);
+    m_format.setSampleRate(AudioInfo::sampleRate);
     m_format.setChannelCount(1);
     m_format.setSampleSize(16);
     m_format.setSampleType(QAudioFormat::SignedInt);
@@ -23,7 +23,7 @@ Squircle::Squircle()
         m_format = m_device.nearestFormat(m_format);
     }
     m_audioInfo = new AudioInfo(m_format, this);
-    connect(m_audioInfo, SIGNAL(update(std::vector<Peak>)), SLOT(dataInput(std::vector<Peak>)));
+    connect(m_audioInfo, SIGNAL(update(double*,quint32)), SLOT(dataInput(double*,quint32)));
     m_audioInput = new QAudioInput(m_device, m_format, this);
 }
 
@@ -79,56 +79,36 @@ void Squircle::stop()
     m_audioInfo->stop();
     m_audioInput->stop();
 }
-void Squircle::dataInput(std::vector<Peak> peaks)
+void Squircle::dataInput(double* mydata,quint32 maxValue)
 {
-    m_renderer->peaks = peaks;
-
     int time  = timeLine->currentTime();
-    std::list<YFData*>::iterator it;
-    for (it = m_renderer->yFDataS.begin(); it != m_renderer->yFDataS.end(); it++)
+    std::vector<YFData*> currentYfs;
+    unsigned long yfSize = m_renderer->yFDataS.size();
+    for (unsigned long i=0;i<yfSize;i++)
     {
-        YFData* yfd = *it;
+        YFData* yfd = m_renderer->yFDataS[i];
         //新增
         int startTime = yfd->orderTime + (2 / 8.0 * 7)  * m_renderer->SPEED;
         int maxTime = startTime + yfd->time ;
         if (maxTime >= time && startTime <= time)
         {
+            //正确继续
+            if(yfd->result == 2){
+                continue;
+            }
+            //状态改成线上
             if(yfd->result == 0){
                 yfd->result = 1;
             }
-            //当前音符频率
-            double key = levelCData[yfd->musicLevel];
-            for (unsigned long i = 0; i < peaks.size(); i++)
-            {
-                //计算频率
-                double f = m_format.sampleRate() * peaks[i].index / (AudioInfo::N);
-                //偏差在0.5%以内
-                if (abs(f - key) / key < 0.005)
-                {
-                    qDebug()<<f <<" " << key <<" "<<" "<<peaks[i].index<<" "<<peaks[i].value;
-                    for (unsigned long j = 0; j < peaks.size(); j++){
-                        qDebug()<<peaks[j].index<<" "<<peaks[j].value;
-                    }
-                    if(yfd->result != 2){
-                        yfd->result = 2;
-                        yfd->color = QVector4D(0, 1, 0, 1);
-                    }
-                }
-            }
-            //错误
-            if (yfd->result != 2)
-            {
-                yfd->color =  QVector4D(1, 0, 0, 1);
-                yfd->result = 3;
-            }
+            currentYfs.push_back(yfd);
         }
     }
+    cacIsRight(mydata,currentYfs,maxValue);
 }
 
 
 SquircleRenderer::~SquircleRenderer()
 {
-    qDebug()<<6;
     delete m_program;
     delete m_singleColorProgram;
 }
@@ -182,10 +162,9 @@ void SquircleRenderer::paint()
 
     //绘制条子
     double time =  m_t;
-    std::list<YFData*>::iterator it;
-    for (it = yFDataS.begin(); it != yFDataS.end(); it++)
+    for (unsigned long i = 0; i<yFDataS.size(); i++)
     {
-        YFData* yfd = *it;
+        YFData* yfd = yFDataS[i];
         //新增
         int maxTime = yfd->orderTime + yfd->time + 2 * SPEED;
         if (maxTime >= time && yfd->orderTime <= time)

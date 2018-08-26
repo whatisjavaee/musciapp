@@ -94,7 +94,7 @@ double* Calculate(double* x, int len)
         {
             // e^(-2*pi/N*k)
             ComplexNumber oddPartMultiplier =
-                ComplexNumber(0, alpha * k).PoweredE();
+                    ComplexNumber(0, alpha * k).PoweredE();
 
             for (int j = k; j < length; j += n)
             {
@@ -116,84 +116,6 @@ double* Calculate(double* x, int len)
     return spectrogram;
 }
 
-int* FindPeaks(double* values, int index, int length,
-               int peaksCount)
-{
-    double* peakValues = new double[peaksCount];
-    int* peakIndices = new int[peaksCount];
-
-    for (int i = 0; i < peaksCount; i++)
-    {
-        peakValues[i] = values[peakIndices[i] = i + index];
-    }
-
-    // find min peaked value
-    double minStoredPeak = peakValues[0];
-    int minIndex = 0;
-    for (int i = 1; i < peaksCount; i++)
-    {
-        if (minStoredPeak > peakValues[i])
-            minStoredPeak = peakValues[minIndex = i];
-    }
-
-    for (int i = peaksCount; i < length; i++)
-    {
-        if (minStoredPeak < values[i + index])
-        {
-            // replace the min peaked value with bigger one
-            peakValues[minIndex] = values[peakIndices[minIndex] = i + index];
-
-            // and find min peaked value again
-            minStoredPeak = peakValues[minIndex = 0];
-            for (int j = 1; j < peaksCount; j++)
-            {
-                if (minStoredPeak > peakValues[j])
-                    minStoredPeak = peakValues[minIndex = j];
-            }
-        }
-    }
-    delete[] peakValues;
-    return peakIndices;
-}
-void ScanSignalIntervals(double* x, int index, int length, int intervalMin,
-                         int intervalMax, int& optimalInterval, double& optimalValue,
-                         int* peakIndices)
-{
-    optimalValue = DBL_MAX;
-    optimalInterval = 0;
-
-    // distance between min and max range value can be big
-    // limiting it to the fixed value
-    const int MaxAmountOfSteps = 30;
-    int steps = intervalMax - intervalMin;
-    if (steps > MaxAmountOfSteps)
-    {
-        steps = MaxAmountOfSteps;
-    }
-    else if (steps <= 0)
-    {
-        steps = 1;
-    }
-
-    // trying all intervals in the range to find one with
-    // smaller difference in signal waves
-    for (int i = 0; i < steps; i++)
-    {
-        int interval = intervalMin + (intervalMax - intervalMin) * i / steps;
-
-        double sum = 0;
-        for (int j = 0; j < length; j++)
-        {
-            double diff = x[index + j] - x[index + j + interval];
-            sum += diff * diff;
-        }
-        if (optimalValue > sum)
-        {
-            optimalValue = sum;
-            optimalInterval = interval;
-        }
-    }
-}
 
 int findMaxPeak(double* values, int values_length, int* peak, int peak_length)
 {
@@ -224,70 +146,8 @@ int findMaxPeak(double* values, int values_length, int* peak, int peak_length)
     return max_index;
 }
 
-// <summary>
-// Finds fundamental frequency: calculates spectrogram, finds peaks, analyzes
-// and refines frequency by diff sample values.
-// </summary>
-// <param name="x">The sounds samples data</param>
-// <param name="sampleRate">The sound sample rate</param>
-// <param name="minFreq">The min useful frequency</param>
-// <param name="maxFreq">The max useful frequency</param>
-// <returns>Found frequency, 0 - otherwise</returns>
-double FindFundamentalFrequency(double* x, int length, int sampleRate,
-                                double minFreq, double maxFreq, double& result)
-{
-    double* spectr = Calculate(x, length);
-    int usefullMinSpectr = qMax(0, (int)(minFreq * length / sampleRate));
-    int usefullMaxSpectr = qMin(length,
-                                (int)(maxFreq * length / sampleRate) + 1);
 
-    // find peaks in the FFT frequency bins
-    const int PeaksCount = 5;
-    int* peakIndices = FindPeaks(spectr, length, usefullMinSpectr, PeaksCount);
-    for (int i = 0; i < PeaksCount; i++)
-    {
-        //   std::cout<<peakIndices[i]<<" ";
-    }
-    // std::cout<<std::endl;
-    for (int i = 0; i < PeaksCount; i++)
-    {
-        if (peakIndices[i] == usefullMinSpectr)
-            return 0;
-    }
-    result = findMaxPeak(spectr, length, peakIndices, PeaksCount);
-    // select fragment to check peak values: data offset
-    const int verifyFragmentOffset = 0;
-    // ... and half length of data
-    int verifyFragmentLength = (int)(sampleRate / minFreq);
 
-    // trying all peaks to find one with smaller difference value
-    double minPeakValue = DBL_MAX;
-    int minPeakIndex = 0;
-    int minOptimalInterval = 0;
-    for (int i = 0; i < PeaksCount; i++)
-    {
-        int index = peakIndices[i];
-        int binIntervalStart = length / (index + 1), binIntervalEnd = length
-                               / index;
-        int interval;
-        double peakValue;
-        // scan bins frequencies/intervals
-        ScanSignalIntervals(x, verifyFragmentOffset, verifyFragmentLength,
-                            binIntervalStart, binIntervalEnd, interval, peakValue,
-                            peakIndices);
-        //  std::cout<<"";
-        if (peakValue < minPeakValue)
-        {
-            minPeakValue = peakValue;
-            minPeakIndex = index;
-            minOptimalInterval = interval;
-        }
-    }
-    delete[] spectr;
-    delete[] peakIndices;
-    // std::cout<<endl<<"minOptimalInterval:"<<minOptimalInterval<<"";
-    return (double) sampleRate / minOptimalInterval;
-}
 void cutNotPeak(double* values, int index, int length){
     int t[length];
     for(int i = index;i<length-1;i++){
@@ -305,13 +165,81 @@ void cutNotPeak(double* values, int index, int length){
     }
 }
 std::vector<Peak> findPeaks(double* values, int start, int end){
-  std::vector<Peak> v;
-  for(int i =start;i<=end;i++){
-      if(values[i]>values[i-1]&&values[i]>values[i+1]){
-          v.push_back(Peak(i,values[i]));
-      }
-  }
-  return v;
+    std::vector<Peak> v;
+    for(int i =start;i<=end;i++){
+        if(values[i]>values[i-1]&&values[i]>values[i+1]){
+            v.push_back(Peak(i,values[i]));
+        }
+    }
+    return v;
+}
+bool greaterSort(Peak a, Peak b)
+{
+    return (a.value > b.value);
+}
+std::vector<Peak> sortPeaks(std::vector<Peak> peaks){
+    std::sort(peaks.begin(),peaks.end(),greaterSort);
+    return peaks;
+}
+std::vector<Peak>  getUsefullPeaks(double* mydata){
+    double* result = Calculate(mydata, AudioInfo::N);
+    int maxLength = 5000/(AudioInfo::sampleRate/(AudioInfo::N+0.0));
+    int minLength = 200/(AudioInfo::sampleRate/(AudioInfo::N+0.0));
+    return sortPeaks(findPeaks(result,minLength,maxLength));
+}
+void cacIsRight(double* mydata,std::vector<YFData*> currentYf,quint32 maxValue){
+    if(currentYf.empty()){
+        return;
+    }
+    if(maxValue<1000){
+        for(unsigned long j=0;j<currentYf.size();j++){
+            YFData*  yfd = currentYf[j];
+            //错误
+            if (yfd->result != 2 && yfd->result != 3)
+            {
+                yfd->color =  QVector4D(1, 0, 0, 1);
+                yfd->result = 3; 
+            }
+            return;
+    }
+    }
+    std::vector<Peak> peaks = getUsefullPeaks(mydata);
+    unsigned long size = peaks.size() > 5?5:peaks.size();
+    initIsDouble(peaks, size*2);
+    qDebug()<<"+++++++++++++++++++++++++++++++++";
+    for(unsigned long j=0;j<size;j++){
+         qDebug()<<peaks[j].index<<" "<<peaks[j].value<<" "<<AudioInfo::sampleRate * peaks[j].index / (AudioInfo::N)<<" "<<sqrt(peaks[j].value)<<" "<<peaks[j].isDouble;
+    }
+    for(unsigned long j=0;j<currentYf.size();j++){
+        YFData*  yfd = currentYf[j];
+        double key = levelCData[yfd->musicLevel];
+        for (unsigned long i = 0; i < size; i++)
+        {
+            if(!peaks[i].isDouble){
+                continue;
+            }
+            //计算频率
+            double f = AudioInfo::sampleRate * peaks[i].index / (AudioInfo::N);
+            //偏差在0.5%以内
+            if (abs(f - key) / key < 0.01)
+            {
+                qDebug()<< key <<" "<<"正确"<<f <<" " <<" "<<peaks[i].index<<" "<<peaks[i].value;
+                if(yfd->result != 2 ){
+                    yfd->result = 2;
+                    yfd->color = QVector4D(0, 1, 0, 1);
+                }
+                continue;
+            }
+        }
+        //错误
+        if (yfd->result != 2)
+        {
+            yfd->color =  QVector4D(1, 0, 0, 1);
+            yfd->result = 3;
+            qDebug()<<"错误"<<key;
+        }
+    }
+
 }
 void zxg(double* values,int start,int end,int length){
     //double* result =new double[length]{0};
@@ -320,8 +248,19 @@ void zxg(double* values,int start,int end,int length){
         for(int k=start;k<length;k++){
             sum +=  values[k]*values[k-start];
         }
-       // result[i] = sum;
+        // result[i] = sum;
         qDebug()<<sum/(length-start)<<" "<<i;
     }
-   // delete[] result;
+    // delete[] result;
+}
+void initIsDouble(std::vector<Peak> &peaks,unsigned long size){
+    for(unsigned long i=0;i<size;i++){
+        for(unsigned long k=i;k<size;k++){
+            if(abs((peaks)[i].index - (peaks)[k].index / 2) < 2 ||abs((peaks)[i].index/2 - (peaks)[k].index ) < 2 ||abs((peaks)[i].index - (peaks)[k].index / 3) < 2 ||abs((peaks)[i].index/3 - (peaks)[k].index ) < 2 ||abs((peaks)[i].index - (peaks)[k].index / 4) < 2 ||abs((peaks)[i].index/4 - (peaks)[k].index ) < 2 ){
+                (peaks)[i].isDouble = true;
+                (peaks)[k].isDouble = true;
+            }
+        }
+    }
+ //   return peaks;
 }

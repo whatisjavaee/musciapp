@@ -6,6 +6,8 @@
 #include <float.h>
 #include "complex.h"
 #include <QDebug>
+#include "audioinput.h"
+#include "yf.h"
 #ifndef M_PI
 #define M_PI       3.14159265358979323846
 #endif
@@ -14,6 +16,7 @@ struct Peak
 {
     int index;
     double value;
+    bool isDouble = false;
     Peak(int _index,double _value){
         index = _index;
         value = _value;
@@ -55,29 +58,15 @@ int ReverseBits(int n, int bitsCount);
 
 double* Calculate(double* x, int len);
 
-int* FindPeaks(double* values, int index, int length,
-               int peaksCount);
-void ScanSignalIntervals(double* x, int index, int length, int intervalMin,
-                         int intervalMax, int& optimalInterval, double& optimalValue,
-                         int* peakIndices);
-
 int findMaxPeak(double* values, int values_length, int* peak, int peak_length);
-
-// <summary>
-// Finds fundamental frequency: calculates spectrogram, finds peaks, analyzes
-// and refines frequency by diff sample values.
-// </summary>
-// <param name="x">The sounds samples data</param>
-// <param name="sampleRate">The sound sample rate</param>
-// <param name="minFreq">The min useful frequency</param>
-// <param name="maxFreq">The max useful frequency</param>
-// <returns>Found frequency, 0 - otherwise</returns>
-double FindFundamentalFrequency(double* x, int length, int sampleRate,
-                                double minFreq, double maxFreq, double& result);
 
 void cutNotPeak(double* values, int index, int length);
 
 void zxg(double* values, int start, int end, int length);
-
+bool greaterSort(Peak a, Peak b);
+void cacIsRight(double* mydata,std::vector<YFData*> yfdata,quint32 maxValue);
 std::vector<Peak> findPeaks(double* values, int start, int end);
+std::vector<Peak> sortPeaks(std::vector<Peak> peaks);
+std::vector<Peak>  getUsefullPeaks(double* mydata);
+void initIsDouble(std::vector<Peak> &peaks,unsigned long size);
 #endif // FFTALGORITHM

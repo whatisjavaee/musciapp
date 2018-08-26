@@ -201,15 +201,10 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
                 ptr += channelBytes;
             }
         }
-        //if(maxValue<5000){
-        //    return len;
-        //}
-        double* result = Calculate(mydata, AudioInfo::N);
-        int maxLength = 5000/(m_format.sampleRate()/(AudioInfo::N+0.0));
-        int minLength = 200/(m_format.sampleRate()/(AudioInfo::N+0.0));
-        std::vector<Peak> peaks = findPeaks(result,minLength,maxLength);
-        emit update(peaks);
-        delete[] result;
+        if(maxValue<3000){
+            return len;
+        }
+        emit update(mydata,maxValue);
     }
     return len;
 }
