@@ -148,7 +148,7 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
         quint32 maxValue = 0;
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(data);
 
-        double mydata[AudioInfo::N] ={0};
+        double mydata[AudioInfo::N] = {0};
         for (int i = 0; i < numSamples; ++i)
         {
             for (int j = 0; j < m_format.channelCount(); ++j)
@@ -196,15 +196,11 @@ qint64 AudioInfo::writeData(const char* data, qint64 len)
                     value = qAbs(*reinterpret_cast<const float*>(ptr) * 0x7fffffff); // assumes 0-1.0
                 }
                 mydata[i] = value;
-                //qDebug()<<value;
                 maxValue = qMax(value, maxValue);
                 ptr += channelBytes;
             }
         }
-        if(maxValue<3000){
-            return len;
-        }
-        emit update(mydata,maxValue);
+        emit update(mydata, maxValue);
     }
     return len;
 }
