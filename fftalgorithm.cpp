@@ -94,7 +94,7 @@ double* Calculate(double* x, int len)
         {
             // e^(-2*pi/N*k)
             ComplexNumber oddPartMultiplier =
-                    ComplexNumber(0, alpha * k).PoweredE();
+                ComplexNumber(0, alpha * k).PoweredE();
 
             for (int j = k; j < length; j += n)
             {
@@ -148,27 +148,38 @@ int findMaxPeak(double* values, int values_length, int* peak, int peak_length)
 
 
 
-void cutNotPeak(double* values, int index, int length){
-    int t[length];
-    for(int i = index;i<length-1;i++){
-        if(values[i]>values[i+1] && values[i]>values[i-1]){
+void cutNotPeak(double* values, int index, int length)
+{
+    int* t = new int[length];
+    for (int i = index; i < length - 1; i++)
+    {
+        if (values[i] > values[i + 1] && values[i] > values[i - 1])
+        {
             t[i] = 1;
-        }else{
+        }
+        else
+        {
             t[i] = 0;
         }
     }
-    for(int i = index;i<length-1;i++){
-        values[i] = t[i]*values[i];
+    for (int i = index; i < length - 1; i++)
+    {
+        values[i] = t[i] * values[i];
     }
-    if(values[length-1]<values[length-2]){
-        values[length-1]=0;
+    if (values[length - 1] < values[length - 2])
+    {
+        values[length - 1] = 0;
     }
+    delete[] t;
 }
-std::vector<Peak> findPeaks(double* values, int start, int end){
+std::vector<Peak> findPeaks(double* values, int start, int end)
+{
     std::vector<Peak> v;
-    for(int i =start;i<=end;i++){
-        if(values[i]>values[i-1]&&values[i]>values[i+1]){
-            v.push_back(Peak(i,values[i]));
+    for (int i = start; i <= end; i++)
+    {
+        if (values[i] > values[i - 1] && values[i] > values[i + 1])
+        {
+            v.push_back(Peak(i, values[i]));
         }
     }
     return v;
@@ -177,45 +188,54 @@ bool greaterSort(Peak a, Peak b)
 {
     return (a.value > b.value);
 }
-std::vector<Peak> sortPeaks(std::vector<Peak> peaks){
-    std::sort(peaks.begin(),peaks.end(),greaterSort);
+std::vector<Peak> sortPeaks(std::vector<Peak> peaks)
+{
+    std::sort(peaks.begin(), peaks.end(), greaterSort);
     return peaks;
 }
-std::vector<Peak>  getUsefullPeaks(double* mydata){
+std::vector<Peak>  getUsefullPeaks(double* mydata)
+{
     double* result = Calculate(mydata, AudioInfo::N);
-    int maxLength = 5000/(AudioInfo::sampleRate/(AudioInfo::N+0.0));
-    int minLength = 200/(AudioInfo::sampleRate/(AudioInfo::N+0.0));
-    return sortPeaks(findPeaks(result,minLength,maxLength));
+    int maxLength = 5000 / (AudioInfo::sampleRate / (AudioInfo::N + 0.0));
+    int minLength = 200 / (AudioInfo::sampleRate / (AudioInfo::N + 0.0));
+    return sortPeaks(findPeaks(result, minLength, maxLength));
 }
-void cacIsRight(double* mydata,std::vector<YFData*> currentYf,quint32 maxValue){
-    if(currentYf.empty()){
+void cacIsRight(double* mydata, std::vector<YFData*> currentYf, quint32 maxValue)
+{
+    if (currentYf.empty())
+    {
         return;
     }
-    if(maxValue<1000){
-        for(unsigned long j=0;j<currentYf.size();j++){
+    if (maxValue < 1000)
+    {
+        for (unsigned long j = 0; j < currentYf.size(); j++)
+        {
             YFData*  yfd = currentYf[j];
             //错误
             if (yfd->result != 2 && yfd->result != 3)
             {
                 yfd->color =  QVector4D(1, 0, 0, 1);
-                yfd->result = 3; 
+                yfd->result = 3;
             }
             return;
-    }
+        }
     }
     std::vector<Peak> peaks = getUsefullPeaks(mydata);
-    unsigned long size = peaks.size() > 5?5:peaks.size();
-    initIsDouble(peaks, size*2);
-    qDebug()<<"+++++++++++++++++++++++++++++++++";
-    for(unsigned long j=0;j<size;j++){
-         qDebug()<<peaks[j].index<<" "<<peaks[j].value<<" "<<AudioInfo::sampleRate * peaks[j].index / (AudioInfo::N)<<" "<<sqrt(peaks[j].value)<<" "<<peaks[j].isDouble;
+    unsigned long size = peaks.size() > 5 ? 5 : peaks.size();
+    initIsDouble(peaks, size * 2);
+    qDebug() << "+++++++++++++++++++++++++++++++++";
+    for (unsigned long j = 0; j < size; j++)
+    {
+        qDebug() << peaks[j].index << " " << peaks[j].value << " " << AudioInfo::sampleRate* peaks[j].index / (AudioInfo::N) << " " << sqrt(peaks[j].value) << " " << peaks[j].isDouble;
     }
-    for(unsigned long j=0;j<currentYf.size();j++){
+    for (unsigned long j = 0; j < currentYf.size(); j++)
+    {
         YFData*  yfd = currentYf[j];
         double key = levelCData[yfd->musicLevel];
         for (unsigned long i = 0; i < size; i++)
         {
-            if(!peaks[i].isDouble){
+            if (!peaks[i].isDouble)
+            {
                 continue;
             }
             //计算频率
@@ -223,8 +243,9 @@ void cacIsRight(double* mydata,std::vector<YFData*> currentYf,quint32 maxValue){
             //偏差在0.5%以内
             if (abs(f - key) / key < 0.01)
             {
-                qDebug()<< key <<" "<<"正确"<<f <<" " <<" "<<peaks[i].index<<" "<<peaks[i].value;
-                if(yfd->result != 2 ){
+                qDebug() << key << " " << "正确" << f << " " << " " << peaks[i].index << " " << peaks[i].value;
+                if (yfd->result != 2)
+                {
                     yfd->result = 2;
                     yfd->color = QVector4D(0, 1, 0, 1);
                 }
@@ -236,31 +257,38 @@ void cacIsRight(double* mydata,std::vector<YFData*> currentYf,quint32 maxValue){
         {
             yfd->color =  QVector4D(1, 0, 0, 1);
             yfd->result = 3;
-            qDebug()<<"错误"<<key;
+            qDebug() << "错误" << key;
         }
     }
 
 }
-void zxg(double* values,int start,int end,int length){
+void zxg(double* values, int start, int end, int length)
+{
     //double* result =new double[length]{0};
-    for(int i = start;i<=end;i++){
-        float sum =0;
-        for(int k=start;k<length;k++){
-            sum +=  values[k]*values[k-start];
+    for (int i = start; i <= end; i++)
+    {
+        float sum = 0;
+        for (int k = start; k < length; k++)
+        {
+            sum +=  values[k] * values[k - start];
         }
         // result[i] = sum;
-        qDebug()<<sum/(length-start)<<" "<<i;
+        qDebug() << sum / (length - start) << " " << i;
     }
     // delete[] result;
 }
-void initIsDouble(std::vector<Peak> &peaks,unsigned long size){
-    for(unsigned long i=0;i<size;i++){
-        for(unsigned long k=i;k<size;k++){
-            if(abs((peaks)[i].index - (peaks)[k].index / 2) < 2 ||abs((peaks)[i].index/2 - (peaks)[k].index ) < 2 ||abs((peaks)[i].index - (peaks)[k].index / 3) < 2 ||abs((peaks)[i].index/3 - (peaks)[k].index ) < 2 ||abs((peaks)[i].index - (peaks)[k].index / 4) < 2 ||abs((peaks)[i].index/4 - (peaks)[k].index ) < 2 ){
+void initIsDouble(std::vector<Peak>& peaks, unsigned long size)
+{
+    for (unsigned long i = 0; i < size; i++)
+    {
+        for (unsigned long k = i; k < size; k++)
+        {
+            if (abs((peaks)[i].index - (peaks)[k].index / 2) < 2 || abs((peaks)[i].index / 2 - (peaks)[k].index) < 2 || abs((peaks)[i].index - (peaks)[k].index / 3) < 2 || abs((peaks)[i].index / 3 - (peaks)[k].index) < 2 || abs((peaks)[i].index - (peaks)[k].index / 4) < 2 || abs((peaks)[i].index / 4 - (peaks)[k].index) < 2)
+            {
                 (peaks)[i].isDouble = true;
                 (peaks)[k].isDouble = true;
             }
         }
     }
- //   return peaks;
+//   return peaks;
 }
