@@ -264,7 +264,6 @@ void cacIsRight(double* mydata, std::vector<YFData*> currentYf, quint32 maxValue
 }
 void zxg(double* values, int start, int end, int length)
 {
-    //double* result =new double[length]{0};
     for (int i = start; i <= end; i++)
     {
         float sum = 0;
@@ -272,10 +271,8 @@ void zxg(double* values, int start, int end, int length)
         {
             sum +=  values[k] * values[k - start];
         }
-        // result[i] = sum;
         qDebug() << sum / (length - start) << " " << i;
     }
-    // delete[] result;
 }
 void initIsDouble(std::vector<Peak>& peaks, unsigned long size)
 {
@@ -290,5 +287,4 @@ void initIsDouble(std::vector<Peak>& peaks, unsigned long size)
             }
         }
     }
-//   return peaks;
 }
