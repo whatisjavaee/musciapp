@@ -110,4 +110,14 @@ ApplicationWindow {
                 Qt.platform.os === "ios" ||
                 Qt.platform.os === "winphone";
     }
+    Binding{
+        target: lj
+        property: "text"
+        value:sq.rightNumber
+    }
+    Binding{
+        target: cw
+        property: "text"
+        value:sq.errorNum
+    }
 }

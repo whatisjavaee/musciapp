@@ -40,3 +40,5 @@ HEADERS += \
     complex.h \
     fftalgorithm.h
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+DISTFILES +=

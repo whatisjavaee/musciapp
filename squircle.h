@@ -73,7 +73,7 @@ public:
         {
             YFData* obj1 = new YFData();
             //obj1->musicLevel = qrand() % 25;
-             obj1->musicLevel = 9 + qrand() % 10;
+            obj1->musicLevel = 9 + qrand() % 10;
             //obj1->musicLevel = 11;
             obj1->musicTime = qrand() % 4 + 1;
             yFDataS.push_back(obj1);
@@ -116,6 +116,8 @@ class Squircle : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(qreal sp READ sp WRITE setSp NOTIFY spChange)
+    Q_PROPERTY(qreal rightNum READ rightNum NOTIFY rightChange)
+    Q_PROPERTY(qreal errorNum READ errorNum NOTIFY errorChange)
 
 public:
     Squircle();
@@ -132,12 +134,21 @@ public:
     {
         return m_sp;
     }
+    qreal rightNum() const
+    {
+        return m_right;
+    }
+    qreal errorNum() const
+    {
+        return m_error;
+    }
     void setSp(qreal sp);
 
 signals:
     void tChanged();
     void spChange();
-
+    void rightChange();
+    void errorChange();
 public slots:
     void sync();
     void cleanup();
@@ -150,6 +161,8 @@ private slots:
 private:
     qreal m_t;
     qreal m_sp = 60.0;
+    qreal m_right =0;
+    qreal m_error =0;
     SquircleRenderer* m_renderer = NULL;
     QTimeLine* timeLine = NULL;
     QAudioDeviceInfo m_device;

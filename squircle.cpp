@@ -104,6 +104,17 @@ void Squircle::dataInput(double* mydata,quint32 maxValue)
         }
     }
     cacIsRight(mydata,currentYfs,maxValue);
+    int sum =0;
+    for(unsigned i =0;i<yfSize;i++){
+         YFData* yfd = m_renderer->yFDataS[i];
+         if(yfd->result == -3){
+             sum++;
+         }
+    }
+    if(sum != m_error){
+        m_error = sum;
+        emit errorChange();
+    }
 }
 
 
