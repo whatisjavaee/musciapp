@@ -120,4 +120,10 @@ ApplicationWindow {
         property: "text"
         value:sq.errorNum
     }
+    Binding{
+        target: df
+        property: "text"
+        value:sq.rightNum * 100
+    }
+
 }
