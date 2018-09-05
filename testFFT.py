@@ -41,11 +41,11 @@ def add_layer(inputs, in_size, out_size, activation_function=None):
 
 xs = tf.placeholder(tf.float32, [None, 1024])
 ys = tf.placeholder(tf.float32, [None, 1])
-l1 = add_layer(xs, 1024, 512, activation_function=tf.nn.sigmoid)
+l1 = add_layer(xs, 1024, 32, activation_function=tf.nn.sigmoid)
 
-prediction = add_layer(l1, 512, 1, activation_function=None)
+prediction = add_layer(l1, 32, 1, activation_function=None)
 loss = tf.reduce_sum(tf.abs(prediction - ys))
-optimizer = tf.train.GradientDescentOptimizer(0.000001)
+optimizer = tf.train.GradientDescentOptimizer(0.0000001)
 train = optimizer.minimize(loss)
 
 # 初始化变量
